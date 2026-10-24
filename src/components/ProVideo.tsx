@@ -13,7 +13,7 @@ export default function ProVideo({ title, onInterest, onPaid }: { title: string;
   const [paid, setPaid] = useState(false);
   const [qr, setQr] = useState<string | null>(null);
   const payload = UPI_VPA
-    ? `upi://pay?pa=${encodeURIComponent(UPI_VPA)}&pn=${encodeURIComponent("Sell It")}&am=${PRO_PRICE}&cu=INR&tn=${encodeURIComponent(`Sell It Pro video: ${title}`.slice(0, 60))}`
+    ? `upi://pay?pa=${encodeURIComponent(UPI_VPA)}&pn=${encodeURIComponent("Hemanth Janesh")}&am=${PRO_PRICE}&cu=INR&tn=${encodeURIComponent(`Sell It Pro video: ${title}`.slice(0, 60))}`
     : `SELL-IT-PRO-DEMO-QR (payments not live yet)`;
 
   useEffect(() => {
