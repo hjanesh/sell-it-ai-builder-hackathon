@@ -1,6 +1,10 @@
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { client, MODEL, FALLBACK, SYSTEM_BASE, imageBlock, errorResponse, RefusalError } from "@/lib/claude";
 import { DetectRequest, DetectResult } from "@/lib/schemas";
+import { runAgent } from "@/lib/agenticorg";
+
+// The Appraiser agent on AgenticOrg (created in the AgenticOrg UI) double-checks the identification from text.
+const APPRAISER = { name: "Appraiser", id: process.env.AGENTICORG_APPRAISER_ID || "71320052-a9fb-40a6-9a11-4c72c81a9fe0" };
 
 export const maxDuration = 60;
 
@@ -40,7 +44,12 @@ export async function POST(req: Request) {
       ],
     });
     if (response.stop_reason === "refusal" || !response.parsed_output) throw new RefusalError();
-    return Response.json(response.parsed_output);
+    const d = response.parsed_output;
+    // Runs alongside, never slows the seller down; every run is logged for the agent activity log.
+    void runAgent(APPRAISER, {
+      task: `Seller says: ${body.caption || "(no note)"}. Our photo observations: ${d.title}; ${[...d.attributes.map((a) => `${a.label}: ${a.value}`), ...d.conditionCues].join("; ")}.`,
+    });
+    return Response.json(d);
   } catch (error) {
     return errorResponse(error);
   }
