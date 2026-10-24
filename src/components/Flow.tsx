@@ -6,6 +6,7 @@ import { compose, enhance, fileToBitmap, toDataUrl, dataUrlToBitmap } from "@/li
 import { Button, Card, Chip, Spinner } from "./ui";
 import { authEnabled, displayName, signInWithGoogle, useSession } from "@/lib/auth";
 import Results, { type Studio } from "./Results";
+import VoiceNote from "./VoiceNote";
 
 type Step = "capture" | "detecting" | "questions" | "results";
 type Availability = "one_off" | "weekly_batches" | "by_request";
@@ -336,6 +337,12 @@ export default function Flow() {
           placeholder="e.g. iPhone 12, 2 years old, small scratch on back, have the box. Or: fresh dosa batter, 1 L, Koramangala, every Tuesday"
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
+        />
+        <VoiceNote
+          onText={(text, lang) => {
+            setCaption((c) => (c ? `${c}\n${text}` : text));
+            if (lang) setLanguage(lang);
+          }}
         />
       </Card>
       <Button disabled={photos.length === 0} onClick={runDetect}>
