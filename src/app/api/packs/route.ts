@@ -1,14 +1,16 @@
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { client, MODEL, FALLBACK, SYSTEM_BASE, errorResponse, RefusalError } from "@/lib/claude";
-import { PacksRequest, PacksResult } from "@/lib/schemas";
+import { PacksRequest, PacksResult, type Language } from "@/lib/schemas";
 import { describeItem } from "@/lib/describe";
 
 export const maxDuration = 60;
 
-const LANGUAGE: Record<string, string> = {
+const LANGUAGE: Record<Language, string> = {
   en: "English",
   hinglish: "Hinglish (Hindi in Latin script mixed with English, the way people text in India)",
   hi: "Hindi in Devanagari script",
+  mr: "Marathi in Devanagari script",
+  ta: "Tamil in Tamil script",
 };
 
 export async function POST(req: Request) {

@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Sell It, your first listing live in sixty seconds, in your language</title>
+  <meta name="description" content="Snap one photo. Sell It writes your listing, prices it from real comparables, and gives you something to forward on WhatsApp. Built in Bengaluru for every Indian home." />
+
+  <meta property="og:title" content="Sell It, your first listing live in sixty seconds" />
+  <meta property="og:description" content="One photo. Four answers. A listing you can forward on WhatsApp in sixty seconds. Built for every Indian home." />
+  <meta property="og:image" content="/og.jpg" />
+  <meta property="og:url" content="https://sellit.app" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0a0a'/%3E%3Ctext x='50' y='66' font-family='Inter, sans-serif' font-weight='500' font-size='52' fill='%23fffaf0' text-anchor='middle' letter-spacing='-2'%3ES%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            primary:        '#0a0a0a',
+            'primary-active': '#1f1f1f',
+            ink:            '#0a0a0a',
+            body:           '#3a3a3a',
+            'body-strong':  '#1a1a1a',
+            muted:          '#6a6a6a',
+            'muted-soft':   '#9a9a9a',
+            hairline:       '#e5e5e5',
+            'hairline-soft':'#f0f0f0',
+            canvas:         '#fffaf0',
+            'surface-soft': '#faf5e8',
+            'surface-card': '#f5f0e0',
+            'surface-strong':'#ebe6d6',
+            'on-primary':   '#ffffff',
+            'brand-pink':   '#ff4d8b',
+            'brand-teal':   '#1a3a3a',
+            'brand-lavender':'#b8a4ed',
+            'brand-peach':  '#ffb084',
+            'brand-ochre':  '#e8b94a',
+            'brand-mint':   '#a4d4c5',
+            'brand-coral':  '#ff6b5a',
+            whatsapp:       '#25d366',
+          },
+          borderRadius: {
+            'xs':  '6px',
+            'sm':  '8px',
+            'md':  '12px',
+            'lg':  '16px',
+            'xl':  '24px',
+          },
+          transitionTimingFunction: {
+            fluid: 'cubic-bezier(0.32, 0.72, 0, 1)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root { color-scheme: light; }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: #fffaf0;
+      color: #0a0a0a;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    .display-xl { font-weight: 500; font-size: clamp(44px, 7vw, 72px); line-height: 1; letter-spacing: -0.035em; }
+    .display-lg { font-weight: 500; font-size: clamp(36px, 5.6vw, 56px); line-height: 1.05; letter-spacing: -0.03em; }
+    .display-md { font-weight: 500; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; letter-spacing: -0.025em; }
+    .display-sm { font-weight: 500; font-size: clamp(24px, 3vw, 32px); line-height: 1.15; letter-spacing: -0.02em; }
+    .title-lg   { font-weight: 600; font-size: 24px; line-height: 1.3; letter-spacing: -0.012em; }
+    .title-md   { font-weight: 600; font-size: 18px; line-height: 1.4; }
+    .body-md    { font-weight: 400; font-size: 16px; line-height: 1.55; }
+    .body-sm    { font-weight: 400; font-size: 14px; line-height: 1.55; }
+    .caption    { font-weight: 500; font-size: 13px; line-height: 1.4; }
+    .caption-up { font-weight: 600; font-size: 12px; line-height: 1.4; letter-spacing: 0.14em; text-transform: uppercase; }
+
+    .balance { text-wrap: balance; }
+    .pretty  { text-wrap: pretty;  }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 900ms cubic-bezier(0.32, 0.72, 0, 1),
+                  transform 900ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .reveal.is-in { opacity: 1; transform: translateY(0); }
+
+    .word {
+      opacity: 0.18;
+      transition: opacity 700ms cubic-bezier(0.32, 0.72, 0, 1);
+      will-change: opacity;
+    }
+    .word.lit { opacity: 1; }
+
+    .btn-primary {
+      background: #0a0a0a;
+      color: #ffffff;
+      padding: 12px 20px;
+      height: 44px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1),
+                  background 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .btn-primary:hover { background: #1f1f1f; transform: translateY(-1px); }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:focus-visible { outline: 2px solid rgba(10,10,10,0.4); outline-offset: 3px; }
+
+    .btn-secondary {
+      background: #fffaf0;
+      color: #0a0a0a;
+      padding: 12px 20px;
+      height: 44px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #e5e5e5;
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1),
+                  border-color 300ms cubic-bezier(0.32, 0.72, 0, 1),
+                  background 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .btn-secondary:hover { border-color: #0a0a0a; transform: translateY(-1px); }
+    .btn-secondary:active { transform: scale(0.98); }
+    .btn-secondary:focus-visible { outline: 2px solid rgba(10,10,10,0.3); outline-offset: 3px; }
+
+    .btn-on-color {
+      background: #fffaf0;
+      color: #0a0a0a;
+      padding: 12px 20px;
+      height: 44px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1), background 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .btn-on-color:hover { background: #ffffff; transform: translateY(-1px); }
+    .btn-on-color:active { transform: scale(0.98); }
+
+    .btn-wa {
+      background: #25d366;
+      color: #ffffff;
+      padding: 12px 20px;
+      height: 44px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1), background 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .btn-wa:hover { background: #1ebb58; transform: translateY(-1px); }
+    .btn-wa:active { transform: scale(0.98); }
+    .btn-wa:focus-visible { outline: 2px solid rgba(37,211,102,0.45); outline-offset: 3px; }
+
+    .badge-pill {
+      background: #f5f0e0;
+      color: #0a0a0a;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 1.4;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .product-chip {
+      background: #fffaf0;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #1a1a1a;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .product-chip-dark {
+      background: rgba(255, 250, 240, 0.14);
+      border: 1px solid rgba(255, 250, 240, 0.22);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feature-card {
+      border-radius: 24px;
+      padding: 32px;
+      transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card:hover { transform: translateY(-3px); }
+
+    .content-card {
+      background: #fffaf0;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 24px;
+      transition: transform 400ms cubic-bezier(0.32, 0.72, 0, 1), border-color 400ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .content-card:hover { border-color: #c5c5c5; transform: translateY(-2px); }
+
+    .nav-island {
+      transition: transform 600ms cubic-bezier(0.32, 0.72, 0, 1);
+      transform: translateY(0);
+    }
+    .ham-line {
+      transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 300ms cubic-bezier(0.32, 0.72, 0, 1);
+      transform-origin: center;
+    }
+    .menu-overlay {
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      background: rgba(255, 250, 240, 0.88);
+      transition: opacity 500ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .menu-link {
+      transform: translateY(48px);
+      opacity: 0;
+      transition: transform 700ms cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 700ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .menu-overlay.open .menu-link { transform: translateY(0); opacity: 1; }
+    .menu-overlay.open .menu-link:nth-child(1) { transition-delay: 120ms; }
+    .menu-overlay.open .menu-link:nth-child(2) { transition-delay: 180ms; }
+    .menu-overlay.open .menu-link:nth-child(3) { transition-delay: 240ms; }
+    .menu-overlay.open .menu-link:nth-child(4) { transition-delay: 300ms; }
+
+    .faq-item { border-top: 1px solid #e5e5e5; }
+    .faq-item:last-child { border-bottom: 1px solid #e5e5e5; }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 600ms cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 400ms cubic-bezier(0.32, 0.72, 0, 1),
+                  padding 500ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .faq-item.open .faq-answer {
+      max-height: 460px;
+      opacity: 1;
+      padding-bottom: 24px;
+    }
+    .faq-caret { transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1); }
+    .faq-item.open .faq-caret { transform: rotate(45deg); }
+
+    .listing-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 6px rgba(10,10,10,0.06), 0 24px 60px -16px rgba(10,10,10,0.14);
+      padding: 14px;
+      border: 1px solid #eee8dc;
+    }
+    .object-tile {
+      aspect-ratio: 4 / 3;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .object-tile .ph { font-size: 56px; opacity: 0.95; }
+
+    .counter-digit {
+      display: inline-block;
+      transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 500ms cubic-bezier(0.32, 0.72, 0, 1),
+                  filter 500ms cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .counter-digit.swap { transform: translateY(-10px); opacity: 0; filter: blur(4px); }
+
+    .float-a { animation: floatA 7s cubic-bezier(0.32,0.72,0,1) infinite alternate; }
+    .float-b { animation: floatB 9s cubic-bezier(0.32,0.72,0,1) infinite alternate; }
+    .float-c { animation: floatC 8s cubic-bezier(0.32,0.72,0,1) infinite alternate; }
+    @keyframes floatA { from { transform: translateY(0) rotate(-6deg); } to { transform: translateY(-6px) rotate(-6deg); } }
+    @keyframes floatB { from { transform: translateY(2px) rotate(3deg); } to { transform: translateY(-6px) rotate(3deg); } }
+    @keyframes floatC { from { transform: translateY(-2px) rotate(-2deg); } to { transform: translateY(5px) rotate(-2deg); } }
+
+    .mascot-bob { animation: mascotBob 6s cubic-bezier(0.32,0.72,0,1) infinite alternate; transform-origin: 50% 60%; }
+    @keyframes mascotBob { from { transform: translateY(0) rotate(-1deg); } to { transform: translateY(-10px) rotate(2deg); } }
+
+    .sun-spin { animation: sunSpin 60s linear infinite; transform-origin: center; }
+    @keyframes sunSpin { to { transform: rotate(360deg); } }
+
+    .pulse-dot { position: relative; }
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 9999px;
+      border: 1px solid currentColor;
+      opacity: 0.5;
+      animation: pulseRing 1.8s cubic-bezier(0.32,0.72,0,1) infinite;
+    }
+    @keyframes pulseRing {
+      0%   { transform: scale(1);    opacity: 0.55; }
+      70%  { transform: scale(1.9);  opacity: 0; }
+      100% { transform: scale(1.9);  opacity: 0; }
+    }
+
+    .toast {
+      transform: translateY(16px);
+      opacity: 0;
+      transition: transform 500ms cubic-bezier(0.32,0.72,0,1), opacity 500ms cubic-bezier(0.32,0.72,0,1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    .hill-rise { transform: translateY(30px); opacity: 0; transition: transform 1200ms cubic-bezier(0.32,0.72,0,1), opacity 1000ms cubic-bezier(0.32,0.72,0,1); }
+    .hill-rise.is-in { transform: translateY(0); opacity: 1; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .word, .counter-digit, .float-a, .float-b, .float-c, .pulse-dot::after,
+      .mascot-bob, .sun-spin, .hill-rise {
+        animation: none !important;
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: #0a0a0a;
+      color: #fffaf0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      z-index: 100;
+    }
+    .skip-link:focus { left: 16px; top: 16px; }
+
+    ::selection { background: #ffb084; color: #0a0a0a; }
+  </style>
+</head>
+
+<body class="bg-canvas text-ink">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- =====================================================
+       TOP NAVIGATION
+       Clay: cream bar, 64px tall, canvas bg
+       Biases: Fitts's Law, Visual Hierarchy
+       ===================================================== -->
+  <nav class="fixed top-6 left-0 right-0 z-50 flex justify-center pointer-events-none px-4">
+    <div class="nav-island pointer-events-auto flex items-center gap-6 bg-canvas/85 backdrop-blur-xl border border-hairline rounded-full pl-5 pr-2 py-2">
+      <a href="#top" class="flex items-center gap-2 font-semibold text-[15px]">
+        <span class="w-7 h-7 rounded-md bg-primary text-canvas grid place-items-center text-[13px] font-medium" style="letter-spacing: -0.03em;">S</span>
+        <span class="hidden sm:inline">Sell It</span>
+      </a>
+      <div class="hidden md:flex items-center gap-5 text-[14px] font-medium text-muted">
+        <a href="#how" class="hover:text-ink transition-colors duration-300 ease-fluid">How it works</a>
+        <a href="#stories" class="hover:text-ink transition-colors duration-300 ease-fluid">Stories</a>
+        <a href="#faq" class="hover:text-ink transition-colors duration-300 ease-fluid">Questions</a>
+      </div>
+      <a href="#capture" class="hidden sm:inline-flex btn-primary" style="height: 36px; padding: 8px 16px; border-radius: 10px;">
+        <span>Try free</span>
+      </a>
+      <button id="menu-btn" aria-label="Open menu" aria-expanded="false" class="md:hidden w-10 h-10 grid place-items-center">
+        <span class="relative w-5 h-4 block">
+          <span class="ham-line absolute left-0 top-0 w-full h-[2px] bg-ink rounded"></span>
+          <span class="ham-line absolute left-0 top-[7px] w-full h-[2px] bg-ink rounded"></span>
+          <span class="ham-line absolute left-0 top-[14px] w-full h-[2px] bg-ink rounded"></span>
+        </span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu overlay -->
+  <div id="menu-overlay" class="menu-overlay fixed inset-0 z-40 flex-col items-center justify-center hidden" style="display: none;">
+    <nav class="flex flex-col items-center gap-6 display-md">
+      <a href="#how"     class="menu-link" onclick="closeMenu()">How it works</a>
+      <a href="#stories" class="menu-link" onclick="closeMenu()">Stories</a>
+      <a href="#faq"     class="menu-link" onclick="closeMenu()">Questions</a>
+      <a href="#capture" class="menu-link btn-primary mt-4" style="font-size:16px; height:48px; padding: 14px 22px;" onclick="closeMenu()">
+        <span>Try free</span>
+      </a>
+    </nav>
+  </div>
+
+  <main id="main">
+    <div id="top" class="h-4"></div>
+
+    <!-- =====================================================
+         HERO
+         Clay: cream canvas, 7-5 grid, big display type,
+         3D claymation illustration on the right
+         Biases: Loss Aversion, Anchoring, Picture Superiority,
+         Serial Position, Peak-End
+         ===================================================== -->
+    <section class="relative pt-28 pb-24 md:pt-36 md:pb-32 px-5 md:px-10">
+      <div class="max-w-[1200px] mx-auto grid lg:grid-cols-[7fr,5fr] gap-14 lg:gap-10 items-center">
+
+        <!-- Hero copy -->
+        <div class="reveal">
+          <div class="flex items-center gap-2 mb-7">
+            <span class="badge-pill">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-pink pulse-dot inline-block" style="color:#ff4d8b;"></span>
+              Live at AI Builders Day, Bengaluru
+            </span>
+          </div>
+
+          <h1 class="display-xl balance text-ink max-w-[720px]">
+            Forty two thousand rupees in your guestroom.<br/>
+            A business in your kitchen.
+          </h1>
+
+          <p class="mt-7 title-md text-body max-w-[520px] pretty" style="font-weight: 400;">
+            Snap one photo. Sell It writes your listing, prices it from real comparables, and gives you something to forward on WhatsApp in sixty seconds.
+          </p>
+
+          <div class="mt-9 flex flex-wrap items-center gap-3">
+            <a href="#capture" class="btn-primary">
+              <i class="ph-bold ph-camera"></i>
+              <span>Snap your first thing</span>
+            </a>
+            <a href="#how" class="btn-secondary">
+              <i class="ph-bold ph-play"></i>
+              <span>See how it works</span>
+            </a>
+          </div>
+
+          <div class="mt-9 flex flex-wrap gap-x-6 gap-y-2 body-sm text-muted">
+            <span class="inline-flex items-center gap-2"><i class="ph ph-check-circle"></i> English, हिंदी, मराठी, தமிழ்</span>
+            <span class="inline-flex items-center gap-2"><i class="ph ph-check-circle"></i> Free to try</span>
+            <span class="inline-flex items-center gap-2"><i class="ph ph-check-circle"></i> Built in Bengaluru</span>
+          </div>
+        </div>
+
+        <!-- Hero illustration: claymation scene + floating listing cards -->
+        <div class="relative reveal" style="transition-delay: 180ms;">
+          <div class="relative aspect-[4/5] max-w-[520px] mx-auto">
+
+            <!-- Claymation-style SVG scene behind the cards -->
+            <svg viewBox="0 0 500 600" class="absolute inset-0 w-full h-full" aria-hidden="true">
+              <defs>
+                <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#ffd98a" />
+                  <stop offset="100%" stop-color="#e8b94a" />
+                </radialGradient>
+                <radialGradient id="hillA" cx="50%" cy="30%" r="80%">
+                  <stop offset="0%" stop-color="#d8c0f5" />
+                  <stop offset="100%" stop-color="#b8a4ed" />
+                </radialGradient>
+                <radialGradient id="hillB" cx="50%" cy="30%" r="80%">
+                  <stop offset="0%" stop-color="#ffc9a4" />
+                  <stop offset="100%" stop-color="#ffb084" />
+                </radialGradient>
+                <radialGradient id="hillC" cx="50%" cy="30%" r="80%">
+                  <stop offset="0%" stop-color="#bedcd1" />
+                  <stop offset="100%" stop-color="#a4d4c5" />
+                </radialGradient>
+                <radialGradient id="mascotGrad" cx="35%" cy="35%" r="80%">
+                  <stop offset="0%" stop-color="#ff8da8" />
+                  <stop offset="100%" stop-color="#ff4d8b" />
+                </radialGradient>
+                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur in="SourceAlpha" stdDeviation="6" />
+                  <feOffset dx="0" dy="8" />
+                  <feComponentTransfer><feFuncA type="linear" slope="0.18" /></feComponentTransfer>
+                  <feMerge>
+                    <feMergeNode />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <!-- Sky backdrop -->
+              <rect width="500" height="600" fill="#faf5e8" rx="24"/>
+
+              <!-- Sun / badge -->
+              <g class="sun-spin" transform="translate(380 110)">
+                <circle r="52" fill="url(#sunGrad)" filter="url(#softShadow)"/>
+                <g stroke="#e8b94a" stroke-width="4" stroke-linecap="round" opacity="0.7">
+                  <line x1="0" y1="-72" x2="0" y2="-62"/>
+                  <line x1="0" y1="62"  x2="0" y2="72"/>
+                  <line x1="-72" y1="0" x2="-62" y2="0"/>
+                  <line x1="62" y1="0"  x2="72" y2="0"/>
+                  <line x1="-50" y1="-50" x2="-44" y2="-44"/>
+                  <line x1="44" y1="44"   x2="50" y2="50"/>
+                  <line x1="-50" y1="50"  x2="-44" y2="44"/>
+                  <line x1="44" y1="-44"  x2="50" y2="-50"/>
+                </g>
+              </g>
+
+              <!-- Back hill (lavender) -->
+              <path d="M -20 440 Q 120 310 260 390 T 540 420 L 540 620 L -20 620 Z"
+                    fill="url(#hillA)" class="hill-rise" filter="url(#softShadow)" />
+              <!-- Mid hill (mint) -->
+              <path d="M -20 490 Q 150 390 300 450 T 540 480 L 540 620 L -20 620 Z"
+                    fill="url(#hillC)" class="hill-rise" style="transition-delay: 120ms;" filter="url(#softShadow)"/>
+              <!-- Front hill (peach) -->
+              <path d="M -20 540 Q 180 470 320 510 T 540 540 L 540 620 L -20 620 Z"
+                    fill="url(#hillB)" class="hill-rise" style="transition-delay: 240ms;" filter="url(#softShadow)"/>
+
+              <!-- Mascot blob character -->
+              <g class="mascot-bob" transform="translate(140 390)">
+                <ellipse cx="0" cy="80" rx="60" ry="12" fill="rgba(10,10,10,0.1)"/>
+                <path d="M -45 -5 Q -70 -50 -30 -70 Q 0 -82 30 -70 Q 70 -50 45 -5 Q 60 50 0 60 Q -60 50 -45 -5 Z"
+                      fill="url(#mascotGrad)" filter="url(#softShadow)"/>
+                <!-- Eyes -->
+                <circle cx="-14" cy="-20" r="4.5" fill="#0a0a0a"/>
+                <circle cx="14" cy="-20" r="4.5" fill="#0a0a0a"/>
+                <circle cx="-12.5" cy="-21.5" r="1.5" fill="#ffffff"/>
+                <circle cx="15.5" cy="-21.5" r="1.5" fill="#ffffff"/>
+                <!-- Mouth -->
+                <path d="M -10 2 Q 0 12 10 2" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <!-- Cheek blush -->
+                <ellipse cx="-24" cy="4" rx="7" ry="4" fill="#ff4d8b" opacity="0.35"/>
+                <ellipse cx="24" cy="4" rx="7" ry="4" fill="#ff4d8b" opacity="0.35"/>
+              </g>
+
+              <!-- Little floating orb / plant -->
+              <g transform="translate(430 480)" class="float-b">
+                <circle r="18" fill="#a4d4c5" filter="url(#softShadow)"/>
+                <circle r="6" fill="#1a3a3a"/>
+              </g>
+            </svg>
+
+            <!-- Floating listing cards layered on top -->
+            <div class="listing-card float-a absolute top-6 left-0 sm:-left-4 w-[220px] sm:w-[240px]">
+              <div class="object-tile" style="background:#f3d4b8;">
+                <i class="ph-duotone ph-cooking-pot" style="color:#8a3a1e;"></i>
+                <span class="product-chip absolute top-2 left-2" style="padding: 3px 8px; font-size:11px;">1 litre</span>
+              </div>
+              <div class="pt-3 px-1 pb-1">
+                <div class="flex items-center justify-between">
+                  <div class="font-semibold text-[13px]">Dosa batter, pure veg</div>
+                  <div class="text-[13px] font-semibold text-brand-coral">&#8377;120</div>
+                </div>
+                <div class="text-[11.5px] text-muted mt-1 pretty leading-snug">Weekly batches, order by Thursday.</div>
+                <div class="flex items-center gap-1 mt-1.5 text-[10px] text-muted-soft">
+                  <i class="ph ph-check"></i><i class="ph ph-check" style="margin-left:-5px;color:#25d366;"></i>
+                  <span>Lakshmi, 09:14</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="listing-card float-c absolute top-32 right-0 sm:-right-4 w-[220px] sm:w-[240px] z-10">
+              <div class="object-tile" style="background:#5a1f2a;">
+                <i class="ph-duotone ph-shirt-folded" style="color:#ffcb8e;"></i>
+                <span class="product-chip absolute top-2 left-2" style="padding: 3px 8px; font-size:11px;">Kanjeevaram</span>
+              </div>
+              <div class="pt-3 px-1 pb-1">
+                <div class="flex items-center justify-between">
+                  <div class="font-semibold text-[13px]">Silk saree, 1998</div>
+                  <div class="text-[13px] font-semibold text-brand-coral">&#8377;2,400</div>
+                </div>
+                <div class="text-[11.5px] text-muted mt-1 pretty leading-snug">Caption in Tamil and English.</div>
+                <div class="flex items-center gap-1 mt-1.5 text-[10px] text-muted-soft">
+                  <i class="ph ph-check"></i><i class="ph ph-check" style="margin-left:-5px;color:#25d366;"></i>
+                  <span>Sudha, 11:38</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="listing-card float-b absolute bottom-4 left-10 sm:left-12 w-[230px] sm:w-[250px] z-20">
+              <div class="object-tile" style="background:#e2e7ec;">
+                <i class="ph-duotone ph-laptop" style="color:#2a3540;"></i>
+                <span class="product-chip absolute top-2 left-2" style="padding: 3px 8px; font-size:11px;">M3, 256 GB</span>
+              </div>
+              <div class="pt-3 px-1 pb-1">
+                <div class="flex items-center justify-between">
+                  <div class="font-semibold text-[13px]">MacBook Air, 2026</div>
+                  <div class="text-[13px] font-semibold text-brand-coral">&#8377;28,500</div>
+                </div>
+                <div class="text-[11.5px] text-muted mt-1 pretty leading-snug">Fair range from five live OLX listings.</div>
+                <div class="flex items-center gap-1 mt-1.5 text-[10px] text-muted-soft">
+                  <i class="ph ph-check"></i><i class="ph ph-check" style="margin-left:-5px;color:#25d366;"></i>
+                  <span>Deepak, 10:02</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================
+         TAGLINE REVEAL (mandatory section)
+         Biases: Zeigarnik, Chunking, Peak-End
+         ===================================================== -->
+    <section class="py-24 md:py-32 px-5 md:px-10" aria-label="Promise">
+      <div class="max-w-3xl mx-auto">
+        <p id="tagline" class="display-lg balance text-ink">
+          <span class="word">One</span>
+          <span class="word">photo.</span>
+          <span class="word">Four</span>
+          <span class="word">answers.</span>
+          <br/>
+          <span class="word">A</span>
+          <span class="word">listing</span>
+          <span class="word">you</span>
+          <span class="word">can</span>
+          <span class="word">forward</span>
+          <span class="word">on</span>
+          <span class="word">WhatsApp</span>
+          <span class="word">in</span>
+          <span class="word">sixty</span>
+          <span class="word">seconds.</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         TWO SELLERS (empathy)
+         Biases: Singularity Effect, Empathy Gap, Framing
+         ===================================================== -->
+    <section class="py-20 md:py-28 px-5 md:px-10">
+      <div class="max-w-[1200px] mx-auto">
+        <div class="reveal mb-12">
+          <p class="caption-up text-muted mb-4">Who it is for</p>
+          <h2 class="display-md balance max-w-[640px]">
+            Two very different sellers. The same first step.
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <article class="feature-card reveal" style="background:#b8a4ed;">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-12 h-12 rounded-full bg-ink text-canvas grid place-items-center font-medium text-[18px]" style="letter-spacing: -0.03em;">P</div>
+              <div>
+                <div class="title-md">Priya, 34</div>
+                <div class="body-sm text-body" style="opacity: 0.75;">Koramangala, Bengaluru</div>
+              </div>
+            </div>
+            <p class="title-lg leading-snug balance" style="font-weight: 500;">
+              Her guestroom has an old laptop, two cameras she stopped using, and a stack of silk sarees her mother passed down. About sixty thousand rupees of value, sitting there for three years.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-2">
+              <span class="product-chip"><i class="ph ph-laptop" style="font-size:12px;"></i> laptop</span>
+              <span class="product-chip"><i class="ph ph-camera" style="font-size:12px;"></i> cameras</span>
+              <span class="product-chip"><i class="ph ph-shirt-folded" style="font-size:12px;"></i> sarees</span>
+            </div>
+          </article>
+
+          <article class="feature-card reveal" style="background:#ffb084; transition-delay: 120ms;">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-12 h-12 rounded-full bg-ink text-canvas grid place-items-center font-medium text-[18px]" style="letter-spacing: -0.03em;">L</div>
+              <div>
+                <div class="title-md">Lakshmi, 46</div>
+                <div class="body-sm text-body" style="opacity: 0.75;">HSR Layout, Bengaluru</div>
+              </div>
+            </div>
+            <p class="title-lg leading-snug balance" style="font-weight: 500;">
+              Her dosa batter has been quietly famous on her floor for two years. Forty orders a month. She has never written a listing in her life.
+            </p>
+            <div class="mt-6 flex flex-wrap gap-2">
+              <span class="product-chip"><i class="ph ph-cooking-pot" style="font-size:12px;"></i> batter</span>
+              <span class="product-chip"><i class="ph ph-chats-circle" style="font-size:12px;"></i> whatsapp orders</span>
+              <span class="product-chip"><i class="ph ph-calendar" style="font-size:12px;"></i> weekly</span>
+            </div>
+          </article>
+        </div>
+
+        <p class="reveal mt-10 text-center body-md text-muted">
+          Both of them start the same way. One photo.
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         FOUR ANSWERS (the 4 Ps, renamed)
+         Clay: cycle saturated colors, no repeat in a row
+         Order: lavender > peach > pink > teal
+         Biases: Pseudo-Set Framing, Chunking, Hick's Law
+         ===================================================== -->
+    <section id="how" class="py-20 md:py-28 px-5 md:px-10 bg-surface-soft">
+      <div class="max-w-[1200px] mx-auto">
+        <div class="reveal mb-14">
+          <p class="caption-up text-muted mb-4">What you get back</p>
+          <h2 class="display-md balance max-w-[720px]">
+            Four answers you would otherwise ask four different tools for.
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+
+          <article class="feature-card reveal" style="background:#b8a4ed;">
+            <div class="flex items-center justify-between mb-8">
+              <span class="product-chip"><i class="ph ph-sparkle" style="font-size: 12px;"></i> AI identifies</span>
+              <i class="ph-duotone ph-magnifying-glass text-[32px]"></i>
+            </div>
+            <h3 class="display-sm mb-3" style="font-weight: 500;">What it is</h3>
+            <p class="body-md pretty mb-6" style="color: #1a1a1a;">
+              Sell It looks at the photo, names the item, writes a sharp first line. If it needs more, it asks.
+            </p>
+            <div class="bg-canvas rounded-md p-3 border border-hairline">
+              <div class="caption-up text-muted mb-1">Draft title</div>
+              <div class="title-sm">2026 MacBook Air M3, 256 GB, boxed</div>
+            </div>
+          </article>
+
+          <article class="feature-card reveal" style="background:#ffb084; transition-delay: 80ms;">
+            <div class="flex items-center justify-between mb-8">
+              <span class="product-chip"><i class="ph ph-link" style="font-size: 12px;"></i> 5 live sources</span>
+              <i class="ph-duotone ph-tag text-[32px]"></i>
+            </div>
+            <h3 class="display-sm mb-3" style="font-weight: 500;">What it is worth</h3>
+            <p class="body-md pretty mb-6" style="color: #1a1a1a;">
+              A fair range, backed by five live listings you can click. No more guessing, no more lowballs.
+            </p>
+            <div class="bg-canvas rounded-md p-3 border border-hairline">
+              <div class="caption-up text-muted mb-1">Fair range</div>
+              <div class="title-sm">&#8377;27,400 to &#8377;29,800</div>
+              <div class="caption text-muted mt-1">OLX, Cashify, Amazon Renewed</div>
+            </div>
+          </article>
+
+          <article class="feature-card reveal" style="background:#ff4d8b; color: #ffffff; transition-delay: 160ms;">
+            <div class="flex items-center justify-between mb-8">
+              <span class="product-chip-dark"><i class="ph ph-translate" style="font-size: 12px;"></i> 2 languages</span>
+              <i class="ph-duotone ph-paint-brush-household text-[32px] text-white"></i>
+            </div>
+            <h3 class="display-sm mb-3" style="font-weight: 500;">How to show it</h3>
+            <p class="body-md pretty mb-6" style="color: rgba(255,255,255,0.9);">
+              Three cleaner photos and a caption that reads like a human wrote it, in two languages.
+            </p>
+            <div class="rounded-md p-3" style="background: rgba(255,250,240,0.14); border: 1px solid rgba(255,250,240,0.22);">
+              <div class="caption-up mb-1" style="color: rgba(255,255,255,0.75);">Caption, Hindi</div>
+              <div class="title-sm">नई जैसी, डिब्बे के साथ. आज ही ले जाइए.</div>
+            </div>
+          </article>
+
+          <article class="feature-card reveal" style="background:#1a3a3a; color: #ffffff; transition-delay: 240ms;">
+            <div class="flex items-center justify-between mb-8">
+              <span class="product-chip-dark"><i class="ph ph-crosshair" style="font-size: 12px;"></i> 2 right channels</span>
+              <i class="ph-duotone ph-map-pin text-[32px] text-white"></i>
+            </div>
+            <h3 class="display-sm mb-3" style="font-weight: 500;">Where to post it</h3>
+            <p class="body-md pretty mb-6" style="color: rgba(255,255,255,0.9);">
+              The two channels that actually sell this specific thing. Not a list of twelve.
+            </p>
+            <div class="rounded-md p-3" style="background: rgba(255,250,240,0.14); border: 1px solid rgba(255,250,240,0.22);">
+              <div class="caption-up mb-1" style="color: rgba(255,255,255,0.75);">For a laptop</div>
+              <div class="title-sm">OLX, Cashify</div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         THREE PEOPLE, SIXTY SECONDS EACH
+         Clay: product-mockup-card style (canvas + hairline)
+         Biases: Storytelling, Goal Gradient, Picture Superiority
+         ===================================================== -->
+    <section class="py-20 md:py-28 px-5 md:px-10">
+      <div class="max-w-[1100px] mx-auto">
+        <div class="reveal mb-14">
+          <p class="caption-up text-muted mb-4">The same sixty seconds</p>
+          <h2 class="display-md balance max-w-[720px]">
+            Three different things. Three different sellers. One flow.
+          </h2>
+        </div>
+
+        <ol class="space-y-5">
+
+          <li class="content-card reveal p-6 md:p-8">
+            <div class="grid md:grid-cols-[auto,1fr,auto] gap-6 items-center">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-ink text-canvas grid place-items-center text-sm font-semibold" style="letter-spacing: -0.02em;">01</div>
+                <div class="object-tile w-20 h-16 rounded-md" style="background:#e2e7ec;"><i class="ph-duotone ph-laptop" style="color:#2a3540; font-size:30px;"></i></div>
+              </div>
+              <div>
+                <div class="title-md">Deepak, old laptop</div>
+                <div class="body-sm text-body pretty mt-1">Snap, identify as 2026 MacBook Air, pull five OLX citations, suggest twenty eight thousand five hundred rupees, post on OLX and Cashify.</div>
+              </div>
+              <div class="flex md:flex-col gap-2 md:items-end flex-wrap">
+                <span class="badge-pill">&#8377;28,500</span>
+                <span class="badge-pill">OLX, Cashify</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="content-card reveal p-6 md:p-8" style="transition-delay: 80ms;">
+            <div class="grid md:grid-cols-[auto,1fr,auto] gap-6 items-center">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-ink text-canvas grid place-items-center text-sm font-semibold" style="letter-spacing: -0.02em;">02</div>
+                <div class="object-tile w-20 h-16 rounded-md" style="background:#f3d4b8;"><i class="ph-duotone ph-basket" style="color:#8a2a0e; font-size:30px;"></i></div>
+              </div>
+              <div>
+                <div class="title-md">Maya, crochet basket</div>
+                <div class="body-sm text-body pretty mt-1">Snap, identify as handmade cotton basket, compare with four Instagram handles and three Etsy listings, suggest eight hundred fifty rupees, caption in English and Hindi.</div>
+              </div>
+              <div class="flex md:flex-col gap-2 md:items-end flex-wrap">
+                <span class="badge-pill">&#8377;850</span>
+                <span class="badge-pill">Instagram, FB</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="content-card reveal p-6 md:p-8" style="transition-delay: 160ms;">
+            <div class="grid md:grid-cols-[auto,1fr,auto] gap-6 items-center">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-ink text-canvas grid place-items-center text-sm font-semibold" style="letter-spacing: -0.02em;">03</div>
+                <div class="object-tile w-20 h-16 rounded-md" style="background:#f6e8d2;"><i class="ph-duotone ph-cooking-pot" style="color:#8a2a0e; font-size:30px;"></i></div>
+              </div>
+              <div>
+                <div class="title-md">Lakshmi, dosa batter</div>
+                <div class="body-sm text-body pretty mt-1">Snap one litre jar, intake form (Koramangala, pure veg kitchen), suggest one hundred twenty rupees, Marathi plus English caption, set to weekly batches.</div>
+              </div>
+              <div class="flex md:flex-col gap-2 md:items-end flex-wrap">
+                <span class="badge-pill">&#8377;120 / 1L</span>
+                <span class="badge-pill">WhatsApp group</span>
+              </div>
+            </div>
+          </li>
+
+        </ol>
+
+        <p class="reveal mt-10 text-center body-md text-muted">
+          Same flow for every item. Three different outputs. Sixty seconds each.
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         LIVE COUNTER
+         Clay: cream canvas, no neon, ink type
+         Biases: Social Proof, Hawthorne, Scarcity, Labor Illusion
+         ===================================================== -->
+    <section class="py-24 md:py-32 px-5 md:px-10 bg-surface-soft">
+      <div class="max-w-[1100px] mx-auto">
+        <div class="reveal flex items-center justify-center gap-2 mb-10">
+          <span class="w-2 h-2 rounded-full bg-brand-pink pulse-dot inline-block" style="color:#ff4d8b;"></span>
+          <span class="caption-up text-muted">Live, right now</span>
+        </div>
+
+        <div class="reveal grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+          <div class="text-center">
+            <div class="display-lg text-ink" data-counter="listings">127</div>
+            <div class="caption text-muted mt-2">Listings today</div>
+          </div>
+          <div class="text-center">
+            <div class="display-lg text-ink"><span class="text-ink">&#8377;</span><span data-counter="rupees">2,43,800</span></div>
+            <div class="caption text-muted mt-2">Rupees listed</div>
+          </div>
+          <div class="text-center">
+            <div class="display-lg text-ink" data-counter="cities">11</div>
+            <div class="caption text-muted mt-2">Cities</div>
+          </div>
+          <div class="text-center">
+            <div class="display-lg text-ink" data-counter="languages">4</div>
+            <div class="caption text-muted mt-2">Languages</div>
+          </div>
+        </div>
+
+        <p class="reveal mt-10 text-center body-md text-muted pretty max-w-md mx-auto">
+          The oldest seller today is sixty one. She just listed her sewing machine.
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         STORIES (testimonials)
+         Clay: cream testimonial cards, rounded-lg
+         Biases: Singularity Effect, Authority, Noble Edge
+         ===================================================== -->
+    <section id="stories" class="py-20 md:py-28 px-5 md:px-10">
+      <div class="max-w-[1100px] mx-auto">
+        <div class="reveal mb-14">
+          <p class="caption-up text-muted mb-4">Stories from today</p>
+          <h2 class="display-md balance max-w-[640px]">
+            Two sellers who had never written a listing before.
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+
+          <blockquote class="feature-card reveal" style="background:#e8b94a;">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-14 h-14 rounded-full grid place-items-center text-xl font-medium text-canvas" style="background:#4a3a2a; letter-spacing: -0.03em;">S</div>
+              <div>
+                <div class="title-md">Sudha</div>
+                <div class="body-sm text-body-strong" style="opacity: 0.75;">61, Jayanagar, Bengaluru</div>
+              </div>
+            </div>
+            <p class="title-lg leading-snug pretty" style="font-weight: 500;">
+              I have a sewing machine from 1998 I did not know what to do with. My grandson showed me this. The listing was in Kannada and English. Someone messaged me the same evening.
+            </p>
+          </blockquote>
+
+          <blockquote class="feature-card reveal" style="background:#f5f0e0; transition-delay: 120ms;">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-14 h-14 rounded-full grid place-items-center text-xl font-medium text-canvas" style="background:#8a2a0e; letter-spacing: -0.03em;">R</div>
+              <div>
+                <div class="title-md">Rekha</div>
+                <div class="body-sm text-muted">34, Pune</div>
+              </div>
+            </div>
+            <p class="title-lg leading-snug pretty" style="font-weight: 500;">
+              I make brownies on weekends. I used to send one blurry photo to the building group. This wrote me a caption, chose Instagram, and set it to weekend batches so I am not drowning in orders on a Tuesday.
+            </p>
+          </blockquote>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         SHARE SECTION
+         Biases: Reciprocity, Social Proof, Fresh Start, Spark
+         ===================================================== -->
+    <section class="py-24 md:py-32 px-5 md:px-10 bg-surface-strong">
+      <div class="max-w-3xl mx-auto text-center">
+        <div class="reveal">
+          <p class="caption-up text-muted mb-4">Pass it on</p>
+          <h2 class="display-lg balance max-w-[640px] mx-auto">
+            Know someone who should try this?
+          </h2>
+          <p class="mt-7 title-md text-body balance max-w-[520px] mx-auto pretty" style="font-weight: 400;">
+            Your mother with her sarees. Your uncle with the second car. Your neighbour who makes brownies on weekends. Send them the link.
+          </p>
+        </div>
+
+        <div class="reveal mt-10 flex flex-wrap items-center justify-center gap-3">
+          <a id="share-wa" href="#" class="btn-wa">
+            <i class="ph-bold ph-whatsapp-logo"></i>
+            <span>Forward on WhatsApp</span>
+          </a>
+          <button id="share-copy" class="btn-primary">
+            <i class="ph-bold ph-link"></i>
+            <span id="copy-label">Copy link</span>
+          </button>
+          <button id="share-system" class="btn-secondary">
+            <i class="ph-bold ph-share-network"></i>
+            <span>More</span>
+          </button>
+        </div>
+
+        <p class="reveal mt-7 caption text-muted">
+          Your link: <span id="share-url">sellit.app</span>
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         FAQ
+         Clay: hairline borders, plus icon, cream canvas
+         Biases: Progressive Disclosure, Curiosity Gap
+         ===================================================== -->
+    <section id="faq" class="py-24 md:py-32 px-5 md:px-10">
+      <div class="max-w-3xl mx-auto">
+        <div class="reveal mb-10">
+          <p class="caption-up text-muted mb-4">Questions, honestly answered</p>
+          <h2 class="display-md balance">Before you snap.</h2>
+        </div>
+
+        <div class="reveal">
+
+          <div class="faq-item">
+            <button class="w-full flex items-center justify-between text-left py-6 gap-6">
+              <span class="title-md pretty">What can I sell with Sell It?</span>
+              <span class="faq-caret w-8 h-8 rounded-full border border-hairline grid place-items-center text-ink shrink-0"><i class="ph-bold ph-plus text-sm"></i></span>
+            </button>
+            <div class="faq-answer body-md text-body pretty">
+              Anything from a home. Clothes, electronics, kitchenware, handmade things, home cooked food in your city, old furniture, instruments, books.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="w-full flex items-center justify-between text-left py-6 gap-6">
+              <span class="title-md pretty">Is it in my language?</span>
+              <span class="faq-caret w-8 h-8 rounded-full border border-hairline grid place-items-center text-ink shrink-0"><i class="ph-bold ph-plus text-sm"></i></span>
+            </button>
+            <div class="faq-answer body-md text-body pretty">
+              English, Hindi, Marathi, and Tamil at launch. Kannada and Telugu are next. Every caption is written in the language your buyer actually speaks.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="w-full flex items-center justify-between text-left py-6 gap-6">
+              <span class="title-md pretty">Where does the price come from?</span>
+              <span class="faq-caret w-8 h-8 rounded-full border border-hairline grid place-items-center text-ink shrink-0"><i class="ph-bold ph-plus text-sm"></i></span>
+            </button>
+            <div class="faq-answer body-md text-body pretty">
+              Live comparable listings on OLX, Facebook Marketplace, Cashify, Amazon Renewed, and small seller handles. Every number shows its five sources, and every source is a link you can click.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="w-full flex items-center justify-between text-left py-6 gap-6">
+              <span class="title-md pretty">Does Sell It post for me?</span>
+              <span class="faq-caret w-8 h-8 rounded-full border border-hairline grid place-items-center text-ink shrink-0"><i class="ph-bold ph-plus text-sm"></i></span>
+            </button>
+            <div class="faq-answer body-md text-body pretty">
+              Sell It writes the listing and gives you a one tap WhatsApp forward. On OLX, Facebook Marketplace, and Instagram you paste once. Direct posting is coming next.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="w-full flex items-center justify-between text-left py-6 gap-6">
+              <span class="title-md pretty">I only make dosa batter on Tuesdays. Will I be flooded with messages?</span>
+              <span class="faq-caret w-8 h-8 rounded-full border border-hairline grid place-items-center text-ink shrink-0"><i class="ph-bold ph-plus text-sm"></i></span>
+            </button>
+            <div class="faq-answer body-md text-body pretty">
+              No. Every listing has a weekly batches, by request, or one off setting. Buyers see it before they message you. You stay in charge of your week.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="w-full flex items-center justify-between text-left py-6 gap-6">
+              <span class="title-md pretty">Do you keep my photos?</span>
+              <span class="faq-caret w-8 h-8 rounded-full border border-hairline grid place-items-center text-ink shrink-0"><i class="ph-bold ph-plus text-sm"></i></span>
+            </button>
+            <div class="faq-answer body-md text-body pretty">
+              Only to make your listing. We never sell data. Delete the listing and the photos go with it.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="w-full flex items-center justify-between text-left py-6 gap-6">
+              <span class="title-md pretty">Who built this?</span>
+              <span class="faq-caret w-8 h-8 rounded-full border border-hairline grid place-items-center text-ink shrink-0"><i class="ph-bold ph-plus text-sm"></i></span>
+            </button>
+            <div class="faq-answer body-md text-body pretty">
+              Two people in Bengaluru, over twelve hours, at AI Builders Day 2026. Hello at sellit dot app.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         FINAL CTA BAND
+         Clay: cta-band-illustrated, surface-soft bg, rounded-xl
+         Biases: Peak-End, Serial Position, Fresh Start
+         ===================================================== -->
+    <section id="capture" class="px-5 md:px-10 pt-10 pb-20">
+      <div class="max-w-[1200px] mx-auto">
+        <div class="reveal rounded-xl bg-surface-soft px-6 py-16 md:px-16 md:py-24 relative overflow-hidden">
+
+          <!-- Signature mountain illustration -->
+          <svg viewBox="0 0 1200 320" preserveAspectRatio="none" class="absolute inset-x-0 bottom-0 w-full h-32 md:h-44" aria-hidden="true">
+            <defs>
+              <radialGradient id="ctaHillA" cx="50%" cy="20%" r="80%">
+                <stop offset="0%" stop-color="#d8c0f5"/><stop offset="100%" stop-color="#b8a4ed"/>
+              </radialGradient>
+              <radialGradient id="ctaHillB" cx="50%" cy="20%" r="80%">
+                <stop offset="0%" stop-color="#ffc9a4"/><stop offset="100%" stop-color="#ffb084"/>
+              </radialGradient>
+              <radialGradient id="ctaHillC" cx="50%" cy="20%" r="80%">
+                <stop offset="0%" stop-color="#bedcd1"/><stop offset="100%" stop-color="#a4d4c5"/>
+              </radialGradient>
+            </defs>
+            <path d="M 0 200 Q 200 60 440 140 T 900 150 T 1200 180 L 1200 320 L 0 320 Z" fill="url(#ctaHillA)"/>
+            <path d="M 0 230 Q 180 150 420 200 T 820 210 T 1200 240 L 1200 320 L 0 320 Z" fill="url(#ctaHillC)"/>
+            <path d="M 0 270 Q 240 220 520 250 T 920 260 T 1200 280 L 1200 320 L 0 320 Z" fill="url(#ctaHillB)"/>
+          </svg>
+
+          <div class="relative text-center">
+            <h2 class="display-lg balance max-w-[640px] mx-auto">
+              Snap your first thing.
+            </h2>
+            <p class="mt-6 title-md text-body balance max-w-[480px] mx-auto" style="font-weight: 400;">
+              Your first listing takes sixty seconds. The rest of your guestroom can wait until tomorrow.
+            </p>
+            <div class="mt-10 flex flex-wrap justify-center gap-3">
+              <a href="/app" class="btn-primary">
+                <i class="ph-bold ph-camera"></i>
+                <span>Snap your first thing</span>
+              </a>
+              <a href="#top" class="btn-secondary">
+                <i class="ph-bold ph-arrow-up"></i>
+                <span>Back to the top</span>
+              </a>
+            </div>
+            <p class="mt-10 caption text-muted">
+              Available in: English &middot; हिंदी &middot; मराठी &middot; தமிழ்
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         FOOTER (cream, not dark, per Clay rules)
+         ===================================================== -->
+    <footer class="bg-surface-soft">
+      <div class="max-w-[1200px] mx-auto px-5 md:px-10 py-16 grid md:grid-cols-4 gap-10">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="w-7 h-7 rounded-md bg-primary text-canvas grid place-items-center text-[13px] font-medium" style="letter-spacing: -0.03em;">S</span>
+            <span class="font-semibold">Sell It</span>
+          </div>
+          <p class="body-sm text-muted pretty max-w-[220px]">
+            Built in Bengaluru. Made for every home.
+          </p>
+        </div>
+        <nav>
+          <p class="caption-up text-muted mb-3">Product</p>
+          <ul class="space-y-2 body-sm">
+            <li><a href="#how" class="text-body hover:text-ink transition-colors">How it works</a></li>
+            <li><a href="#stories" class="text-body hover:text-ink transition-colors">Stories</a></li>
+            <li><a href="#faq" class="text-body hover:text-ink transition-colors">Questions</a></li>
+          </ul>
+        </nav>
+        <nav>
+          <p class="caption-up text-muted mb-3">Company</p>
+          <ul class="space-y-2 body-sm">
+            <li><a href="/about" class="text-body hover:text-ink transition-colors">About</a></li>
+            <li><a href="/press" class="text-body hover:text-ink transition-colors">Press</a></li>
+            <li><a href="mailto:hello@sellit.app" class="text-body hover:text-ink transition-colors">hello@sellit.app</a></li>
+          </ul>
+        </nav>
+        <nav>
+          <p class="caption-up text-muted mb-3">Legal</p>
+          <ul class="space-y-2 body-sm">
+            <li><a href="/privacy" class="text-body hover:text-ink transition-colors">Privacy</a></li>
+            <li><a href="/terms" class="text-body hover:text-ink transition-colors">Terms</a></li>
+            <li><a href="/security" class="text-body hover:text-ink transition-colors">Security</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Signature mountain row -->
+      <svg viewBox="0 0 1200 200" preserveAspectRatio="none" class="w-full h-20 md:h-28" aria-hidden="true">
+        <defs>
+          <radialGradient id="footHillA" cx="50%" cy="20%" r="80%"><stop offset="0%" stop-color="#d8c0f5"/><stop offset="100%" stop-color="#b8a4ed"/></radialGradient>
+          <radialGradient id="footHillB" cx="50%" cy="20%" r="80%"><stop offset="0%" stop-color="#ffc9a4"/><stop offset="100%" stop-color="#ffb084"/></radialGradient>
+          <radialGradient id="footHillC" cx="50%" cy="20%" r="80%"><stop offset="0%" stop-color="#bedcd1"/><stop offset="100%" stop-color="#a4d4c5"/></radialGradient>
+        </defs>
+        <path d="M 0 120 Q 200 40 440 90 T 900 100 T 1200 120 L 1200 200 L 0 200 Z" fill="url(#footHillA)"/>
+        <path d="M 0 150 Q 240 90 500 130 T 900 140 T 1200 160 L 1200 200 L 0 200 Z" fill="url(#footHillC)"/>
+        <path d="M 0 180 Q 300 140 580 170 T 980 180 T 1200 190 L 1200 200 L 0 200 Z" fill="url(#footHillB)"/>
+      </svg>
+
+      <div class="border-t border-hairline bg-surface-card">
+        <div class="max-w-[1200px] mx-auto px-5 md:px-10 py-5 caption text-muted flex flex-wrap justify-between gap-3">
+          <span>&copy; 2026 Sell It. All listings made by their sellers.</span>
+          <span>AI Builders Day entry, Oct 24.</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] bg-ink text-canvas px-5 py-3 rounded-md text-sm font-medium flex items-center gap-2">
+    <i class="ph-bold ph-check"></i>
+    <span id="toast-text">Link copied</span>
+  </div>
+
+  <!-- FAQ Schema (AEO) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What can I sell with Sell It?", "acceptedAnswer": { "@type": "Answer", "text": "Anything from a home. Clothes, electronics, kitchenware, handmade things, home cooked food in your city, old furniture, instruments, books." } },
+      { "@type": "Question", "name": "Is it in my language?", "acceptedAnswer": { "@type": "Answer", "text": "English, Hindi, Marathi and Tamil at launch. Kannada and Telugu are next." } },
+      { "@type": "Question", "name": "Where does the price come from?", "acceptedAnswer": { "@type": "Answer", "text": "Live comparable listings on OLX, Facebook Marketplace, Cashify, Amazon Renewed, and small seller handles. Every number shows its five sources." } },
+      { "@type": "Question", "name": "Does Sell It post for me?", "acceptedAnswer": { "@type": "Answer", "text": "Sell It writes the listing and gives you a one tap WhatsApp forward. On OLX, Facebook Marketplace, and Instagram you paste once." } },
+      { "@type": "Question", "name": "Will I be flooded with messages?", "acceptedAnswer": { "@type": "Answer", "text": "No. Every listing has a weekly batches, by request, or one off setting that buyers see before messaging you." } },
+      { "@type": "Question", "name": "Do you keep my photos?", "acceptedAnswer": { "@type": "Answer", "text": "Only to make your listing. We never sell data. Delete the listing and the photos go with it." } }
+    ]
+  }
+  </script>
+
+  <!-- =====================================================
+       MOTION + INTERACTIONS
+       ===================================================== -->
+  <script>
+    /* ---- IntersectionObserver reveals ---- */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.14, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+    /* ---- Hills rise on viewport entry ---- */
+    const hillIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-in');
+          hillIO.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.hill-rise').forEach((el) => hillIO.observe(el));
+
+    /* ---- Tagline word-by-word reveal ---- */
+    const tagline = document.getElementById('tagline');
+    const words = tagline ? Array.from(tagline.querySelectorAll('.word')) : [];
+    const taglineIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        words.forEach((w, i) => {
+          setTimeout(() => w.classList.add('lit'), 120 * i + 80);
+        });
+        taglineIO.unobserve(e.target);
+      });
+    }, { threshold: 0.4 });
+    if (tagline) taglineIO.observe(tagline);
+
+    /* ---- Hamburger / overlay ---- */
+    const menuBtn = document.getElementById('menu-btn');
+    const overlay = document.getElementById('menu-overlay');
+    const lines = menuBtn ? menuBtn.querySelectorAll('.ham-line') : [];
+    let menuOpen = false;
+    function openMenu() {
+      overlay.style.display = 'flex';
+      requestAnimationFrame(() => overlay.classList.add('open'));
+      lines[0].style.transform = 'translateY(7px) rotate(45deg)';
+      lines[1].style.opacity = '0';
+      lines[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+      menuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      menuOpen = true;
+    }
+    function closeMenu() {
+      overlay.classList.remove('open');
+      lines[0].style.transform = '';
+      lines[1].style.opacity = '';
+      lines[2].style.transform = '';
+      menuBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      menuOpen = false;
+      setTimeout(() => { if (!menuOpen) overlay.style.display = 'none'; }, 500);
+    }
+    if (menuBtn) menuBtn.addEventListener('click', () => (menuOpen ? closeMenu() : openMenu()));
+
+    /* ---- Live counter ticks ---- */
+    const counters = { listings: 127, rupees: 243800, cities: 11, languages: 4 };
+    function fmtRupees(n) {
+      const s = n.toString();
+      if (s.length <= 3) return s;
+      const last3 = s.slice(-3);
+      const rest = s.slice(0, -3);
+      return rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + last3;
+    }
+    function paintCounter(key, value) {
+      document.querySelectorAll(`[data-counter="${key}"]`).forEach((el) => {
+        const next = key === 'rupees' ? fmtRupees(value) : value.toString();
+        if (el.textContent === next) return;
+        el.classList.add('counter-digit', 'swap');
+        setTimeout(() => {
+          el.textContent = next;
+          el.classList.remove('swap');
+        }, 240);
+      });
+    }
+    paintCounter('listings', counters.listings);
+    paintCounter('rupees', counters.rupees);
+    paintCounter('cities', counters.cities);
+    paintCounter('languages', counters.languages);
+    setInterval(() => {
+      counters.listings += 1;
+      counters.rupees += Math.floor(400 + Math.random() * 2600);
+      paintCounter('listings', counters.listings);
+      paintCounter('rupees', counters.rupees);
+    }, 7000);
+
+    /* ---- FAQ accordion ---- */
+    document.querySelectorAll('.faq-item button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        item.classList.toggle('open');
+      });
+    });
+
+    /* ---- Share link mechanics ---- */
+    const params = new URLSearchParams(location.search);
+    const referrer = params.get('via') || 'friend';
+    const shareUrl = `https://sellit.app/?via=${encodeURIComponent(referrer)}`;
+    document.getElementById('share-url').textContent = `sellit.app/?via=${referrer}`;
+
+    const waText = `Try this. Snap one photo of anything in your house and it writes you a listing in your language in sixty seconds. ${shareUrl}`;
+    document.getElementById('share-wa').href = `https://wa.me/?text=${encodeURIComponent(waText)}`;
+
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-text');
+    function showToast(msg) {
+      toastText.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    document.getElementById('share-copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        document.getElementById('copy-label').textContent = 'Copied';
+        showToast('Link copied');
+        setTimeout(() => (document.getElementById('copy-label').textContent = 'Copy link'), 1800);
+      } catch (err) {
+        showToast('Copy failed. Long press the link.');
+      }
+    });
+
+    document.getElementById('share-system').addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'Sell It', text: 'Snap one photo. It writes your listing. Sixty seconds.', url: shareUrl });
+        } catch (_) {}
+      } else {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          showToast('Link copied');
+        } catch (_) {
+          showToast('Long press the link to copy.');
+        }
+      }
+    });
+
+    /* ---- Nav island subtle shrink on scroll ---- */
+    const navIsland = document.querySelector('.nav-island');
+    function onScroll() {
+      const y = window.scrollY;
+      if (y > 80) navIsland.style.transform = 'translateY(-2px) scale(0.98)';
+      else navIsland.style.transform = 'translateY(0) scale(1)';
+    }
+    document.addEventListener('scroll', () => requestAnimationFrame(onScroll), { passive: true });
+  </script>
+
+</body>
+</html>

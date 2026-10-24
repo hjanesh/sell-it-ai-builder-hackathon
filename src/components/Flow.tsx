@@ -11,7 +11,7 @@ type Availability = "one_off" | "weekly_batches" | "by_request";
 export type Seller = { name: string; whatsapp: string };
 
 const TYPE_LABEL: Record<ListingType, string> = { pre_owned: "Pre-owned", new: "New / unused", homemade: "Homemade" };
-const LANG_LABEL: Record<Language, string> = { en: "English", hinglish: "Hinglish", hi: "हिंदी" };
+const LANG_LABEL: Record<Language, string> = { en: "English", hinglish: "Hinglish", hi: "हिंदी", mr: "मराठी", ta: "தமிழ்" };
 const AVAIL_LABEL: Record<Availability, string> = { one_off: "One-off", weekly_batches: "Weekly batches", by_request: "By request" };
 
 async function postJSON<T>(url: string, body: unknown): Promise<T> {
@@ -272,7 +272,7 @@ export default function Flow() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-3xl font-medium tracking-tight leading-tight">What are you selling?</h1>
+        <h1 className="display-md balance">What are you selling?</h1>
         <p className="mt-1 text-muted">Snap a photo. Add a line about it. We&apos;ll do the rest.</p>
       </div>
       {error && <p className="rounded-2xl bg-error/10 p-3 text-sm text-error">{error}</p>}

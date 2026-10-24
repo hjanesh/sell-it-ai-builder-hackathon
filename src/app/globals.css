@@ -2,8 +2,8 @@
 
 /* Design language: docs/DESIGN.md (cream canvas, near-black CTAs, saturated single-colour cards). */
 :root {
-  --background: #faf5e8; /* surface-soft */
-  --surface: #fffaf0; /* canvas */
+  --background: #fffaf0; /* canvas */
+  --surface: #fffaf0; /* canvas; cards are separated by hairlines, as on the landing page */
   --foreground: #0a0a0a; /* ink */
   --body: #3a3a3a;
   --muted: #6a6a6a;
@@ -48,3 +48,15 @@ body {
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
+
+/* Type scale from the landing page (src/app/landing/landing.html). */
+.display-xl { font-weight: 500; font-size: clamp(44px, 7vw, 72px); line-height: 1; letter-spacing: -0.035em; }
+.display-lg { font-weight: 500; font-size: clamp(36px, 5.6vw, 56px); line-height: 1.05; letter-spacing: -0.03em; }
+.display-md { font-weight: 500; font-size: clamp(28px, 4vw, 40px); line-height: 1.1; letter-spacing: -0.025em; }
+.display-sm { font-weight: 500; font-size: clamp(24px, 3vw, 32px); line-height: 1.15; letter-spacing: -0.02em; }
+.title-md { font-weight: 600; font-size: 18px; line-height: 1.4; }
+.body-md { font-weight: 400; font-size: 16px; line-height: 1.55; }
+.caption-up { font-weight: 600; font-size: 12px; line-height: 1.4; letter-spacing: 0.14em; text-transform: uppercase; }
+.balance { text-wrap: balance; }
+.pretty { text-wrap: pretty; }
+::selection { background: #ffb084; color: #0a0a0a; }

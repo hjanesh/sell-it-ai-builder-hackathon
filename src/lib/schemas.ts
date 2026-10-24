@@ -5,7 +5,7 @@ import { z } from "zod";
 export const ListingType = z.enum(["pre_owned", "new", "homemade"]);
 export type ListingType = z.infer<typeof ListingType>;
 
-export const Language = z.enum(["en", "hinglish", "hi"]);
+export const Language = z.enum(["en", "hinglish", "hi", "mr", "ta"]);
 export type Language = z.infer<typeof Language>;
 
 export const Question = z.object({

@@ -41,7 +41,19 @@ const CHANNEL_LABEL: Record<Channel, string> = {
   listing_page: "Listing page",
 };
 const TABS: Exclude<Channel, "listing_page">[] = ["whatsapp", "instagram", "olx", "marketplace"];
-const LANG_LABEL: Record<Language, string> = { en: "English", hinglish: "Hinglish", hi: "हिंदी" };
+type View = "photos" | "price" | "post";
+const VIEWS: { id: View; label: string }[] = [
+  { id: "photos", label: "Photos" },
+  { id: "price", label: "Price" },
+  { id: "post", label: "Post" },
+];
+const LANG_LABEL: Record<Language, string> = {
+  en: "English",
+  hinglish: "Hinglish",
+  hi: "हिंदी",
+  mr: "मराठी",
+  ta: "தமிழ்",
+};
 
 export default function Results(props: Props) {
   const { detect, studio, price, packs } = props;
@@ -54,6 +66,8 @@ export default function Results(props: Props) {
   const priceValue = editedPrice ?? cards?.recommended ?? floor ?? null;
   // Default to the best-ranked channel until the seller picks a tab.
   const [tabChoice, setTab] = useState<(typeof TABS)[number] | null>(null);
+  // One step on screen at a time: photos, then price, then where to post.
+  const [step, setStep] = useState<View>("photos");
   const bestTab = packs?.place.find((p) => p.channel !== "listing_page")?.channel as (typeof TABS)[number] | undefined;
   const tab = tabChoice ?? bestTab ?? "whatsapp";
   const [slug, setSlug] = useState<string | null>(null);
@@ -150,230 +164,327 @@ export default function Results(props: Props) {
   const top = packs.place.slice(0, 2);
 
   return (
-    <div className="flex flex-col gap-4 pb-10">
+    <div className="flex flex-col gap-5 pb-28">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-wide text-brand">Your listing is ready</p>
-        <h1 className="mt-1 text-2xl font-medium tracking-tight leading-tight">{title}</h1>
-        <p className="mt-1 text-muted">{packs.positioning}</p>
+        <p className="caption-up text-muted">Your listing is ready</p>
+        <h1 className="display-sm mt-2 balance">{title}</h1>
       </div>
 
-      {/* Photos */}
-      <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4">
-        {studio ? (
-          <>
-            {studio.square.map((src, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={i} src={src} alt="" className="w-64 shrink-0 snap-center rounded-2xl border border-line" />
-            ))}
-            <figure className="w-64 shrink-0 snap-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={studio.original} alt="" className="aspect-square w-full rounded-2xl border border-line object-cover" />
-              <figcaption className="mt-1 text-xs text-muted">Original, untouched</figcaption>
-            </figure>
-          </>
-        ) : (
-          <div className="h-64 w-64 animate-pulse rounded-2xl bg-cream-strong" />
-        )}
-      </div>
-      <p className="-mt-2 text-xs text-muted">Photos cleaned up (crop, light, background). The item itself is never edited.</p>
+      <nav className="grid grid-cols-3 gap-1 rounded-full border border-line bg-surface p-1" aria-label="Steps">
+        {VIEWS.map((s, i) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => setStep(s.id)}
+            className={`min-h-10 rounded-full text-sm font-semibold transition ${step === s.id ? "bg-brand text-brand-ink" : "text-muted"}`}
+          >
+            {i + 1}. {s.label}
+          </button>
+        ))}
+      </nav>
 
-      {/* Price */}
-      <Card>
-        <h2 className="text-lg font-semibold">What to charge</h2>
-        {cards ? (
-          <>
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              {(
-                [
-                  ["Sell fast", cards.fast, "Goes in a day or two"],
-                  ["Recommended", cards.recommended, "Fair, sells in a week"],
-                  ["Best price", cards.best, "If you can wait"],
-                ] as const
-              ).map(([label, value, hint]) => {
-                const active = priceValue === value;
-                return (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => setPriceValue(value)}
-                    className={`flex min-h-24 flex-col items-start justify-between rounded-xl border p-3 text-left transition ${
-                      active ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface"
-                    }`}
-                  >
-                    <span className={`text-xs font-semibold ${active ? "text-brand-ink" : "text-muted"}`}>{label}</span>
-                    <span className="text-xl font-medium tracking-tight">₹{formatINR(value)}</span>
-                    <span className={`text-[11px] leading-tight ${active ? "text-brand-ink/80" : "text-muted"}`}>{hint}</span>
-                  </button>
-                );
-              })}
-            </div>
-            <PriceInput value={priceValue} onChange={setPriceValue} />
-            <ul className="mt-3 list-disc pl-5 text-sm text-body">
-              {price!.reasons.map((r, i) => (
-                <li key={i}>{r}</li>
-              ))}
-            </ul>
-            {price!.comps.length > 0 ? (
-              <div className="mt-3">
-                <p className="text-sm font-semibold">Similar listings we found today</p>
-                <ul className="mt-1 flex flex-col gap-1">
-                  {price!.comps.map((c, i) => (
-                    <li key={i}>
-                      <a href={c.url} target="_blank" rel="noreferrer" className="flex justify-between gap-3 rounded-xl bg-cream px-3 py-2 text-sm">
-                        <span className="line-clamp-1">
-                          <span className="font-medium">{c.source}</span> · {c.title}
-                        </span>
-                        <span className="shrink-0 font-semibold">{c.priceText}</span>
-                      </a>
-                    </li>
+      {step === "photos" && (
+        <>
+          <p className="body-md text-body pretty">{packs.positioning}</p>
+          {/* Photos */}
+          <div className="no-scrollbar -mx-4 flex snap-x gap-3 overflow-x-auto px-4">
+            {studio ? (
+              <>
+                {studio.square.map((src, i) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={i} src={src} alt="" className="w-64 shrink-0 snap-center rounded-2xl border border-line" />
+                ))}
+                <figure className="w-64 shrink-0 snap-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={studio.original} alt="" className="aspect-square w-full rounded-2xl border border-line object-cover" />
+                  <figcaption className="mt-1 text-xs text-muted">Original, untouched</figcaption>
+                </figure>
+              </>
+            ) : (
+              <div className="h-64 w-64 animate-pulse rounded-2xl bg-cream-strong" />
+            )}
+          </div>
+          <p className="-mt-2 text-xs text-muted">
+            Cropped and light-corrected. Nothing in the photo is changed. The last one is your original.
+          </p>
+        </>
+      )}
+
+      {step === "price" && (
+        /* Price */
+        <Card>
+          <h2 className="text-lg font-semibold">What to charge</h2>
+          {cards ? (
+            <>
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {(
+                  [
+                    ["Sell fast", cards.fast, "Goes in a day or two"],
+                    ["Recommended", cards.recommended, "Fair, sells in a week"],
+                    ["Best price", cards.best, "If you can wait"],
+                  ] as const
+                ).map(([label, value, hint]) => {
+                  const active = priceValue === value;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setPriceValue(value)}
+                      className={`flex min-h-24 flex-col items-start justify-between rounded-xl border p-3 text-left transition ${
+                        active ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface"
+                      }`}
+                    >
+                      <span className={`text-xs font-semibold ${active ? "text-brand-ink" : "text-muted"}`}>{label}</span>
+                      <span className="text-xl font-medium tracking-tight">₹{formatINR(value)}</span>
+                      <span className={`text-[11px] leading-tight ${active ? "text-brand-ink/80" : "text-muted"}`}>{hint}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <PriceInput value={priceValue} onChange={setPriceValue} />
+              <details className="mt-3 rounded-xl bg-cream p-3 text-sm">
+                <summary className="cursor-pointer font-semibold">Why this price</summary>
+                <ul className="mt-2 list-disc pl-5 text-body">
+                  {price!.reasons.map((r, i) => (
+                    <li key={i}>{r}</li>
                   ))}
                 </ul>
+              </details>
+              {price!.comps.length > 0 ? (
+                <div className="mt-3">
+                  <p className="text-sm font-semibold">Similar listings we found today</p>
+                  <ul className="mt-1 flex flex-col gap-1">
+                    {price!.comps.map((c, i) => (
+                      <li key={i}>
+                        <a
+                          href={c.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex justify-between gap-3 rounded-xl bg-cream px-3 py-2 text-sm"
+                        >
+                          <span className="line-clamp-1">
+                            <span className="font-medium">{c.source}</span> · {c.title}
+                          </span>
+                          <span className="shrink-0 font-semibold">{c.priceText}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <p className="mt-3 text-xs text-muted">No reliable comparable listings found. This is an estimate.</p>
+              )}
+            </>
+          ) : props.priceError ? (
+            <div className="mt-2 flex flex-col gap-2">
+              <p className="text-sm text-error">{props.priceError}</p>
+              <PriceInput value={priceValue} onChange={setPriceValue} />
+            </div>
+          ) : (
+            <p className="mt-2 animate-pulse text-muted">Checking real listings for a fair price…</p>
+          )}
+          {detect.listingType === "homemade" && <CostCalculator cost={cost} floor={floor} onChange={setCost} />}
+        </Card>
+      )}
+
+      {step === "post" && (
+        <>
+          {/* Place */}
+          <Card tone="lavender">
+            <p className="caption-up">Best places for this</p>
+            <ol className="mt-3 flex flex-col gap-2">
+              {top.map((p, i) => (
+                <li key={p.channel} className="flex gap-3">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-brand-ink">
+                    {i + 1}
+                  </span>
+                  <span className="text-sm">
+                    <span className="font-semibold">{CHANNEL_LABEL[p.channel]}</span>
+                    <span className="text-body">: {p.reason}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </Card>
+
+          {/* Channel packs */}
+          <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+            {TABS.map((t) => (
+              <Chip key={t} active={tab === t} onClick={() => setTab(t)}>
+                {CHANNEL_LABEL[t]}
+              </Chip>
+            ))}
+          </div>
+
+          {tab === "whatsapp" && (
+            <WhatsAppPack packs={packs} studio={studio} story={story} withLink={withLink} fill={fill} onDone={afterAction} />
+          )}
+          {tab === "instagram" && <InstagramPack packs={packs} studio={studio} story={story} fill={fill} onDone={afterAction} />}
+          {tab === "olx" && (
+            <GuidedPost
+              platform="OLX"
+              openUrl="https://www.olx.in/post"
+              images={studio?.olx ?? []}
+              onDone={afterAction}
+              steps={[
+                {
+                  title: "Open OLX and tap + SELL",
+                  hint: "Use the OLX app if you have it.",
+                },
+                { title: "Choose the category", value: packs.olx.categoryPath },
+                // Price, location, title and description have their own steps below.
+                ...packs.olx.details
+                  .filter((d) => !/price|location|title|description/i.test(d.field))
+                  .map((d) => ({ title: d.field, value: fill(d.value) })),
+                { title: "Ad title", value: fill(packs.olx.title) },
+                {
+                  title: "Describe what you are selling",
+                  value: fill(packs.olx.description),
+                },
+                {
+                  title: "Set a price",
+                  value: priceValue ? String(priceValue) : "",
+                },
+                {
+                  title: "Upload photos",
+                  hint: "Save the photos below first, then pick them in OLX.",
+                  photos: true,
+                },
+                {
+                  title: "Confirm your location",
+                  value: props.answers.location ?? "",
+                },
+                { title: "Review your details and tap Post now" },
+              ]}
+            />
+          )}
+          {tab === "marketplace" && (
+            <GuidedPost
+              platform="Marketplace"
+              openUrl="https://www.facebook.com/marketplace/create/item"
+              images={studio?.olx ?? []}
+              onDone={afterAction}
+              steps={[
+                {
+                  title: "Open Facebook → Marketplace → Create new listing → Item for sale",
+                },
+                {
+                  title: "Add photos",
+                  hint: "Save the photos below first.",
+                  photos: true,
+                },
+                { title: "Title", value: fill(packs.marketplace.title) },
+                { title: "Price", value: priceValue ? String(priceValue) : "" },
+                { title: "Category", value: packs.marketplace.category },
+                { title: "Condition", value: packs.marketplace.condition },
+                {
+                  title: "Description",
+                  value: fill(packs.marketplace.description),
+                },
+                { title: "Location", value: props.answers.location ?? "" },
+                { title: "Tap Next, then Publish" },
+              ]}
+            />
+          )}
+
+          {/* Listing page */}
+          <Card>
+            <h2 className="text-lg font-semibold">Your Sell It listing page</h2>
+            <p className="text-sm text-muted">One link with all photos and details, and a WhatsApp button for buyers.</p>
+            {listingUrl ? (
+              <div className="mt-3 flex items-center gap-2">
+                <a href={listingUrl} target="_blank" rel="noreferrer" className="line-clamp-1 flex-1 text-brand underline">
+                  {listingUrl}
+                </a>
+                <CopyButton text={listingUrl} onCopied={() => afterAction("copied", "listing_page")} />
               </div>
             ) : (
-              <p className="mt-3 text-xs text-muted">No reliable comparable listings found. This is an estimate.</p>
+              <Button variant="secondary" className="mt-3 w-full" onClick={() => ensurePublished().catch((e) => alert(e.message))}>
+                Get my listing link
+              </Button>
             )}
-          </>
-        ) : props.priceError ? (
-          <div className="mt-2 flex flex-col gap-2">
-            <p className="text-sm text-error">{props.priceError}</p>
-            <PriceInput value={priceValue} onChange={setPriceValue} />
+          </Card>
+
+          <div className="flex flex-col gap-3">
+            <Button
+              variant="secondary"
+              disabled={!studio}
+              onClick={async () => {
+                if (!studio) return;
+                const name = title.replace(/[^\w]+/g, "-").slice(0, 40);
+                const blob = async (d: string) => (await fetch(d)).blob();
+                await downloadZip(name, [
+                  ...(await Promise.all(
+                    studio.square.map(async (d, i) => ({
+                      path: `square/photo-${i + 1}.jpg`,
+                      data: await blob(d),
+                    })),
+                  )),
+                  ...(await Promise.all(
+                    studio.olx.map(async (d, i) => ({
+                      path: `olx-marketplace/photo-${i + 1}.jpg`,
+                      data: await blob(d),
+                    })),
+                  )),
+                  ...(await Promise.all(
+                    studio.feed.map(async (d, i) => ({
+                      path: `instagram-post/photo-${i + 1}.jpg`,
+                      data: await blob(d),
+                    })),
+                  )),
+                  ...(story ? [{ path: "story-status.jpg", data: await blob(story) }] : []),
+                  { path: "original.jpg", data: await blob(studio.original) },
+                  {
+                    path: "olx.txt",
+                    data: `${packs.olx.title}\n\n${fill(packs.olx.description)}`,
+                  },
+                  {
+                    path: "marketplace.txt",
+                    data: `${packs.marketplace.title}\n\n${fill(packs.marketplace.description)}`,
+                  },
+                  {
+                    path: "instagram.txt",
+                    data: `${fill(packs.instagram.caption)}\n\n${packs.instagram.hashtags.map((h) => `#${h}`).join(" ")}`,
+                  },
+                  {
+                    path: "whatsapp.txt",
+                    data: Object.entries(packs.whatsapp)
+                      .map(([k, v]) => `--- ${k} ---\n${fill(v)}`)
+                      .join("\n\n"),
+                  },
+                ]);
+                afterAction("exported", "zip");
+              }}
+            >
+              ⬇ Download everything (ZIP)
+            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-muted">Posts language:</span>
+              {(Object.keys(LANG_LABEL) as Language[]).map((l) => (
+                <Chip key={l} active={props.language === l} onClick={() => props.onLanguage(l)}>
+                  {LANG_LABEL[l]}
+                </Chip>
+              ))}
+            </div>
+            <Button variant="ghost" onClick={props.onNew}>
+              Sell something else
+            </Button>
+            <button className="text-sm text-muted underline" onClick={() => setShowFeedback(true)}>
+              Give feedback
+            </button>
           </div>
-        ) : (
-          <p className="mt-2 animate-pulse text-muted">Checking real listings for a fair price…</p>
-        )}
-        {detect.listingType === "homemade" && <CostCalculator cost={cost} floor={floor} onChange={setCost} />}
-      </Card>
-
-      {/* Place */}
-      <Card tone="lavender">
-        <h2 className="text-lg font-semibold">Best places to post this</h2>
-        <ol className="mt-2 flex flex-col gap-2">
-          {top.map((p, i) => (
-            <li key={p.channel} className="flex gap-3">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-brand-ink">{i + 1}</span>
-              <span>
-                <span className="font-semibold">{CHANNEL_LABEL[p.channel]}</span>
-                <span className="text-body">: {p.reason}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-        {packs.alsoConsider.length > 0 && <p className="mt-2 text-sm text-body">Also worth trying: {packs.alsoConsider.join(", ")}</p>}
-      </Card>
-
-      {/* Channel packs */}
-      <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
-        {TABS.map((t) => (
-          <Chip key={t} active={tab === t} onClick={() => setTab(t)}>
-            {CHANNEL_LABEL[t]}
-          </Chip>
-        ))}
-      </div>
-
-      {tab === "whatsapp" && <WhatsAppPack packs={packs} studio={studio} story={story} withLink={withLink} fill={fill} onDone={afterAction} />}
-      {tab === "instagram" && <InstagramPack packs={packs} studio={studio} story={story} fill={fill} onDone={afterAction} />}
-      {tab === "olx" && (
-        <GuidedPost
-          platform="OLX"
-          openUrl="https://www.olx.in/post"
-          images={studio?.olx ?? []}
-          onDone={afterAction}
-          steps={[
-            { title: "Open OLX and tap + SELL", hint: "Use the OLX app if you have it." },
-            { title: "Choose the category", value: packs.olx.categoryPath },
-            // Price, location, title and description have their own steps below.
-            ...packs.olx.details
-              .filter((d) => !/price|location|title|description/i.test(d.field))
-              .map((d) => ({ title: d.field, value: fill(d.value) })),
-            { title: "Ad title", value: fill(packs.olx.title) },
-            { title: "Describe what you are selling", value: fill(packs.olx.description) },
-            { title: "Set a price", value: priceValue ? String(priceValue) : "" },
-            { title: "Upload photos", hint: "Save the photos below first, then pick them in OLX.", photos: true },
-            { title: "Confirm your location", value: props.answers.location ?? "" },
-            { title: "Review your details and tap Post now" },
-          ]}
-        />
-      )}
-      {tab === "marketplace" && (
-        <GuidedPost
-          platform="Marketplace"
-          openUrl="https://www.facebook.com/marketplace/create/item"
-          images={studio?.olx ?? []}
-          onDone={afterAction}
-          steps={[
-            { title: "Open Facebook → Marketplace → Create new listing → Item for sale" },
-            { title: "Add photos", hint: "Save the photos below first.", photos: true },
-            { title: "Title", value: fill(packs.marketplace.title) },
-            { title: "Price", value: priceValue ? String(priceValue) : "" },
-            { title: "Category", value: packs.marketplace.category },
-            { title: "Condition", value: packs.marketplace.condition },
-            { title: "Description", value: fill(packs.marketplace.description) },
-            { title: "Location", value: props.answers.location ?? "" },
-            { title: "Tap Next, then Publish" },
-          ]}
-        />
+        </>
       )}
 
-      {/* Listing page */}
-      <Card>
-        <h2 className="text-lg font-semibold">Your Sell It listing page</h2>
-        <p className="text-sm text-muted">One link with all photos and details, and a WhatsApp button for buyers.</p>
-        {listingUrl ? (
-          <div className="mt-3 flex items-center gap-2">
-            <a href={listingUrl} target="_blank" rel="noreferrer" className="line-clamp-1 flex-1 text-brand underline">
-              {listingUrl}
-            </a>
-            <CopyButton text={listingUrl} onCopied={() => afterAction("copied", "listing_page")} />
+      {step !== "post" && (
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-surface/95 p-4 backdrop-blur">
+          <div className="mx-auto max-w-md">
+            <Button className="w-full" onClick={() => setStep(step === "photos" ? "price" : "post")}>
+              {step === "photos" ? "Next: set the price →" : `Next: post it at ₹${priceValue ? formatINR(priceValue) : "…"} →`}
+            </Button>
           </div>
-        ) : (
-          <Button variant="secondary" className="mt-3 w-full" onClick={() => ensurePublished().catch((e) => alert(e.message))}>
-            Get my listing link
-          </Button>
-        )}
-      </Card>
-
-      <div className="flex flex-col gap-3">
-        <Button
-          variant="secondary"
-          disabled={!studio}
-          onClick={async () => {
-            if (!studio) return;
-            const name = title.replace(/[^\w]+/g, "-").slice(0, 40);
-            const blob = async (d: string) => (await fetch(d)).blob();
-            await downloadZip(name, [
-              ...(await Promise.all(studio.square.map(async (d, i) => ({ path: `square/photo-${i + 1}.jpg`, data: await blob(d) })))),
-              ...(await Promise.all(studio.olx.map(async (d, i) => ({ path: `olx-marketplace/photo-${i + 1}.jpg`, data: await blob(d) })))),
-              ...(await Promise.all(studio.feed.map(async (d, i) => ({ path: `instagram-post/photo-${i + 1}.jpg`, data: await blob(d) })))),
-              ...(story ? [{ path: "story-status.jpg", data: await blob(story) }] : []),
-              { path: "original.jpg", data: await blob(studio.original) },
-              { path: "olx.txt", data: `${packs.olx.title}\n\n${fill(packs.olx.description)}` },
-              { path: "marketplace.txt", data: `${packs.marketplace.title}\n\n${fill(packs.marketplace.description)}` },
-              { path: "instagram.txt", data: `${fill(packs.instagram.caption)}\n\n${packs.instagram.hashtags.map((h) => `#${h}`).join(" ")}` },
-              {
-                path: "whatsapp.txt",
-                data: Object.entries(packs.whatsapp).map(([k, v]) => `--- ${k} ---\n${fill(v)}`).join("\n\n"),
-              },
-            ]);
-            afterAction("exported", "zip");
-          }}
-        >
-          ⬇ Download everything (ZIP)
-        </Button>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-muted">Posts language:</span>
-          {(Object.keys(LANG_LABEL) as Language[]).map((l) => (
-            <Chip key={l} active={props.language === l} onClick={() => props.onLanguage(l)}>
-              {LANG_LABEL[l]}
-            </Chip>
-          ))}
         </div>
-        <Button variant="ghost" onClick={props.onNew}>
-          Sell something else
-        </Button>
-        <button className="text-sm text-muted underline" onClick={() => setShowFeedback(true)}>
-          Give feedback
-        </button>
-      </div>
+      )}
 
       {showFeedback && <FeedbackSheet slug={slug} onClose={() => setShowFeedback(false)} />}
     </div>
@@ -474,7 +585,9 @@ function InstagramPack({
       {format === "post" ? (
         <pre className="mt-3 max-h-60 overflow-auto whitespace-pre-wrap rounded-2xl bg-cream p-3 font-sans text-sm">{caption}</pre>
       ) : (
-        <p className="mt-3 text-sm text-muted">Story text on the image: “{packs.instagram.storyText}”. Add a link sticker with your listing link.</p>
+        <p className="mt-3 text-sm text-muted">
+          Story text on the image: “{packs.instagram.storyText}”. Add a link sticker with your listing link.
+        </p>
       )}
       <div className="mt-3 flex flex-col gap-2">
         <Button
@@ -488,7 +601,9 @@ function InstagramPack({
         >
           Copy caption &amp; share to Instagram
         </Button>
-        {format === "post" && <CopyButton text={caption} label="Copy caption only" onCopied={() => onDone("copied", "instagram_caption")} />}
+        {format === "post" && (
+          <CopyButton text={caption} label="Copy caption only" onCopied={() => onDone("copied", "instagram_caption")} />
+        )}
       </div>
       <p className="mt-2 text-xs text-muted">
         {format === "post"
@@ -608,7 +723,11 @@ function FeedbackSheet({ slug, onClose }: { slug: string | null; onClose: () => 
             <p className="mt-4 text-sm font-medium">Where will you post it?</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {options.map((o) => (
-                <Chip key={o} active={where.includes(o)} onClick={() => setWhere(where.includes(o) ? where.filter((w) => w !== o) : [...where, o])}>
+                <Chip
+                  key={o}
+                  active={where.includes(o)}
+                  onClick={() => setWhere(where.includes(o) ? where.filter((w) => w !== o) : [...where, o])}
+                >
                   {o}
                 </Chip>
               ))}
@@ -627,7 +746,12 @@ function FeedbackSheet({ slug, onClose }: { slug: string | null; onClose: () => 
                 await fetch("/api/feedback", {
                   method: "POST",
                   headers: { "content-type": "application/json" },
-                  body: JSON.stringify({ listingSlug: slug, thumbs, wherePosting: where, comment }),
+                  body: JSON.stringify({
+                    listingSlug: slug,
+                    thumbs,
+                    wherePosting: where,
+                    comment,
+                  }),
                 });
                 setSent(true);
               }}
@@ -666,7 +790,12 @@ function CostCalculator({ cost, floor, onChange }: { cost: Cost; floor: number |
         inputMode="decimal"
         placeholder={placeholder}
         value={cost[key] || ""}
-        onChange={(e) => onChange({ ...cost, [key]: Number(e.target.value.replace(/[^\d.]/g, "")) || 0 })}
+        onChange={(e) =>
+          onChange({
+            ...cost,
+            [key]: Number(e.target.value.replace(/[^\d.]/g, "")) || 0,
+          })
+        }
       />
     </label>
   );
