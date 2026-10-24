@@ -404,14 +404,20 @@ export default function Results(props: Props) {
             />
           )}
 
-          <ProVideo title={title} onInterest={() => track("pro_interest", "pro_video", slug)} />
+          <ProVideo
+            title={title}
+            onInterest={() => track("pro_interest", "pro_video", slug)}
+            onPaid={() => track("pro_paid", "pro_video", slug)}
+          />
 
           {/* Listing page */}
           <Card>
             <h2 className="text-lg font-semibold">Your Sell It listing page</h2>
             <p className="text-sm text-muted">One link with all photos and details, and a WhatsApp button for buyers.</p>
             {reviewStatus === "pending" && (
-              <p className="mt-2 rounded-xl bg-accent/30 p-2 text-sm">⏳ Our team is checking this listing. The link goes live as soon as it&apos;s approved.</p>
+              <p className="mt-2 rounded-xl bg-accent/30 p-2 text-sm">
+                ⏳ Our team is checking this listing. The link goes live as soon as it&apos;s approved.
+              </p>
             )}
             {listingUrl ? (
               <div className="mt-3 flex items-center gap-2">

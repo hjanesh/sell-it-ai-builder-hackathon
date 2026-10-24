@@ -4,7 +4,7 @@ import { insertEvent } from "@/lib/store";
 import { errorResponse } from "@/lib/claude";
 
 const Body = z.object({
-  name: z.enum(["exported", "shared", "copied", "page_viewed", "opened_platform", "pro_interest"]),
+  name: z.enum(["exported", "shared", "copied", "page_viewed", "opened_platform", "pro_interest", "pro_paid"]),
   listingSlug: z.string().nullable(),
   channel: z.string().nullable(),
 });

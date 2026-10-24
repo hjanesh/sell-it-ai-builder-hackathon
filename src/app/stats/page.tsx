@@ -16,6 +16,7 @@ export default async function Stats() {
   const shares = events.filter((e) => e.name === "shared" || e.name === "exported" || e.name === "copied").length;
   const views = events.filter((e) => e.name === "page_viewed").length;
   const proInterest = events.filter((e) => e.name === "pro_interest").length;
+  const proPaid = events.filter((e) => e.name === "pro_paid").length;
   const byType = Object.entries(
     listings.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.listing_type]: (acc[l.listing_type] ?? 0) + 1 }), {}),
   );
@@ -29,6 +30,7 @@ export default async function Stats() {
     ["Shares & exports", shares],
     ["Listing page views", views],
     ["Want the Pro video", proInterest],
+    ["Paid for Pro (UPI, to verify)", proPaid],
   ] as const;
 
   return (

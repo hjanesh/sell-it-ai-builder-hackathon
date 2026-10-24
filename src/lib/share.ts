@@ -41,7 +41,7 @@ export async function downloadZip(name: string, entries: { path: string; data: B
   downloadFile(await zip.generateAsync({ type: "blob" }), `${name}.zip`);
 }
 
-export function track(name: "exported" | "shared" | "copied" | "page_viewed" | "opened_platform" | "pro_interest", channel: string | null, listingSlug: string | null) {
+export function track(name: "exported" | "shared" | "copied" | "page_viewed" | "opened_platform" | "pro_interest" | "pro_paid", channel: string | null, listingSlug: string | null) {
   fetch("/api/events", {
     method: "POST",
     headers: { "content-type": "application/json" },
