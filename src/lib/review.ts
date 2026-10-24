@@ -6,12 +6,11 @@ import type { Listing } from "./store";
 // Approve → live. Flag or low confidence → "pending" until a person on the team approves at /review.
 // If the agent is unreachable we don't block the seller: the listing goes live, marked "unchecked".
 
-// With AGENTICORG_REVIEWER_ID set (an agent created in the AgenticOrg UI), that agent runs by its UUID;
-// otherwise AgenticOrg's pre-built support_triage agent runs by type (it doesn't appear in the workspace's agent list).
+// "Sellit Listing Reviewer", created in our AgenticOrg workspace. Flags come back as hitl_triggered and show up in
+// AgenticOrg → Approvals; the listing stays "pending" until a person approves it.
 export const LISTING_REVIEWER = {
   name: "Listing Reviewer",
-  id: process.env.AGENTICORG_REVIEWER_ID || undefined,
-  type: process.env.AGENTICORG_REVIEWER_TYPE ?? "support_triage",
+  id: process.env.AGENTICORG_REVIEWER_ID || "d8bcaffb-7fdc-42d9-be95-d3adea90e3c7",
 };
 
 export type Review = {
@@ -20,6 +19,8 @@ export type Review = {
   confidence: number | null;
   decidedBy: "agent" | "human";
   decidedAt: string;
+  /** AgenticOrg's id for the run (matches the request in its Approvals page). */
+  agentRunId?: string | null;
 };
 
 export async function reviewListing(listing: Listing): Promise<Review> {
@@ -42,14 +43,19 @@ export async function reviewListing(listing: Listing): Promise<Review> {
   if (run.status === "error" || run.status === "failed" || run.status === "budget_exceeded") {
     return { status: "unchecked", reasons: ["Reviewer unavailable"], confidence: null, decidedBy: "agent", decidedAt: now };
   }
-  const out = (run.output ?? {}) as { status?: string; processing_trace?: string[]; escalation_reason?: string | null };
-  const reasons = (out.processing_trace ?? []).slice(-3);
-  const approved = out.status === "approved" && run.status === "completed" && (run.confidence ?? 0) >= 0.85;
+  const out = (run.output ?? {}) as { status?: string; reasons?: string[]; processing_trace?: string[]; escalation_reason?: string | null };
+  const reasons = out.reasons ?? (out.processing_trace ?? []).slice(-3);
+  const raw = (run.raw ?? {}) as { correlation_id?: string; run_id?: string };
+  const agentRunId = raw.correlation_id ?? raw.run_id ?? null;
+  // The agent's own verdict decides. A low-confidence approval still lands in AgenticOrg → Approvals
+  // (hitl_triggered), but only an explicit flag holds the seller's link until a human approves it.
+  const approved = out.status === "approved";
   return {
     status: approved ? "approved" : "pending",
     reasons: approved ? reasons : [out.escalation_reason ?? "", ...reasons].filter(Boolean),
     confidence: run.confidence,
     decidedBy: "agent",
     decidedAt: now,
+    agentRunId,
   };
 }

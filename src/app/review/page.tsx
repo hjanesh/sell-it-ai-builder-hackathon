@@ -22,10 +22,16 @@ export default async function ReviewQueue({ searchParams }: PageProps<"/review">
       <AppHeader />
       <p className="caption-up text-muted">Human approval</p>
       <h1 className="display-sm mt-2">Listings waiting for you ({queue.length})</h1>
-      <p className="mt-2 text-sm text-muted">Flagged by the Listing Reviewer agent on AgenticOrg. Nothing here is public until you approve it.</p>
+      <p className="mt-2 text-sm text-muted">
+        Flagged by the Sellit Listing Reviewer agent on AgenticOrg. Each one is also waiting in{" "}
+        <a className="underline" href="https://agenticorg.hackathon.pinelabs.com/dashboard/approvals" target="_blank" rel="noreferrer">
+          AgenticOrg → Approvals
+        </a>
+        . Record your decision there, then tap it here to publish or block the listing.
+      </p>
       <ul className="mt-5 flex flex-col gap-3">
         {queue.map((l) => {
-          const review = (l.data as { review?: { reasons?: string[]; confidence?: number | null } }).review;
+          const review = (l.data as { review?: { reasons?: string[]; confidence?: number | null; agentRunId?: string | null } }).review;
           return (
             <li key={l.slug} className="rounded-2xl border border-line bg-surface p-4">
               <div className="flex gap-3">
@@ -34,7 +40,10 @@ export default async function ReviewQueue({ searchParams }: PageProps<"/review">
                 <div>
                   <p className="font-semibold">{l.title}</p>
                   <p className="text-sm">₹{formatINR(l.price)} · {l.seller_name}</p>
-                  <p className="text-xs text-muted">Agent confidence: {review?.confidence ?? "–"}</p>
+                  <p className="text-xs text-muted">
+                    Agent confidence: {review?.confidence ?? "–"}
+                    {review?.agentRunId ? ` · AgenticOrg run ${review.agentRunId}` : ""}
+                  </p>
                 </div>
               </div>
               <ul className="mt-3 list-disc pl-5 text-sm text-body">
