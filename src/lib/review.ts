@@ -6,7 +6,13 @@ import type { Listing } from "./store";
 // Approve → live. Flag or low confidence → "pending" until a person on the team approves at /review.
 // If the agent is unreachable we don't block the seller: the listing goes live, marked "unchecked".
 
-export const LISTING_REVIEWER = { name: "Listing Reviewer", type: process.env.AGENTICORG_REVIEWER_TYPE ?? "support_triage" };
+// With AGENTICORG_REVIEWER_ID set (an agent created in the AgenticOrg UI), that agent runs by its UUID;
+// otherwise AgenticOrg's pre-built support_triage agent runs by type (it doesn't appear in the workspace's agent list).
+export const LISTING_REVIEWER = {
+  name: "Listing Reviewer",
+  id: process.env.AGENTICORG_REVIEWER_ID || undefined,
+  type: process.env.AGENTICORG_REVIEWER_TYPE ?? "support_triage",
+};
 
 export type Review = {
   status: "approved" | "pending" | "rejected" | "unchecked";
