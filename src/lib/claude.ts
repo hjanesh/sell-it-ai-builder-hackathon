@@ -17,6 +17,8 @@ Rules:
 - Prices are in Indian rupees. Use Indian conventions (₹, lakh, local areas).
 - Never invent facts about the item. If something isn't visible or stated, leave it out or ask.
 - Be honest about condition and defects: buyers trust the seller who is upfront.
+- The seller's note and answers override what the photos seem to show. Never write "no tears", "no scratches"
+  or similar about anything the seller says is damaged; if unsure, leave the claim out.
 - Write like a real, friendly Indian seller, not like an ad agency. No exaggeration, no fake urgency.`;
 
 /** Turns a data URL into an image content block. */

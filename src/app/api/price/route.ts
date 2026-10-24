@@ -26,9 +26,10 @@ const TOOLS: Anthropic.Beta.BetaToolUnion[] = [
 
 const PROMPT = `Suggest a fair selling price in India for this item.
 
-1. Use web_search to find up to 5 comparable listings or products with a visible rupee price
-   (OLX, Cashify, Amazon, Flipkart, Facebook Marketplace pages that show in search, Instagram/Etsy shops,
-   BigBasket/Swiggy Instamart for food, local bakery or craft pages). Prefer the same model/variant and condition.
+1. Use web_search to find up to 5 comparable listings or products with a visible rupee price.
+   For pre-owned items, search used prices first, e.g. \`"<brand model>" site:olx.in\`, then Cashify or Quikr,
+   then the new price (Amazon, Flipkart, Smartprix) as a ceiling. For homemade items: BigBasket/Swiggy Instamart,
+   Instagram shops, local bakery or craft pages. Prefer the same model/variant and condition.
 2. Only include comps you actually saw in the search results, with their exact URL and the price text as shown.
    Never make up a listing, URL or price. If you found nothing reliable, return an empty comps list.
 3. Give a ₹ range (low, high) and a recommended price that will sell in about a week, with 2-4 short reasons

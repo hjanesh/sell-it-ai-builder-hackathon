@@ -1,14 +1,23 @@
 @import "tailwindcss";
 
+/* Design language: docs/DESIGN.md (cream canvas, near-black CTAs, saturated single-colour cards). */
 :root {
-  --background: #faf7f2;
-  --surface: #ffffff;
-  --foreground: #1c1917;
-  --muted: #78716c;
-  --line: #e7e5e4;
-  --brand: #0f766e;
+  --background: #faf5e8; /* surface-soft */
+  --surface: #fffaf0; /* canvas */
+  --foreground: #0a0a0a; /* ink */
+  --body: #3a3a3a;
+  --muted: #6a6a6a;
+  --line: #e5e5e5; /* hairline */
+  --brand: #0a0a0a; /* primary */
   --brand-ink: #ffffff;
-  --accent: #f59e0b;
+  --accent: #e8b94a; /* brand-ochre */
+  --cream: #f5f0e0; /* surface-card */
+  --cream-strong: #ebe6d6;
+  --pink: #ff4d8b;
+  --lavender: #b8a4ed;
+  --peach: #ffb084;
+  --mint: #a4d4c5;
+  --error: #ef4444;
 }
 
 @theme inline {
@@ -20,8 +29,15 @@
   --color-brand: var(--brand);
   --color-brand-ink: var(--brand-ink);
   --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-body: var(--body);
+  --color-cream: var(--cream);
+  --color-cream-strong: var(--cream-strong);
+  --color-pink: var(--pink);
+  --color-lavender: var(--lavender);
+  --color-peach: var(--peach);
+  --color-mint: var(--mint);
+  --color-error: var(--error);
+  --font-sans: var(--font-inter);
 }
 
 body {

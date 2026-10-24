@@ -3,7 +3,7 @@
 **Decided by Hemanth (13:00):** name **Sell It** · free for signed-up users, **product video = Pro**,
 paid through a **sponsor gateway (Pine Labs)** · stack **Render + Supabase** · **price comps in P0** ·
 **channels + posting UX (C4)**, see §1 and §7.
-C12 + C13 decided (§1). Still open: C3, C6, C8, C10, C11 (Pro video).
+C12 + C13 decided (§1). C3 decided (§4: no background removal). Still open: C6, C8, C10, C11 (Pro video).
 The teammates' product description is merged into §1. Any further business/theme docs still need merging.
 
 **Sources merged:** `docs/handoff/` (base plan, ~12:30) + `docs/BechDe-Pitch.md` (teammate pitch, written pre-kickoff).
@@ -50,7 +50,10 @@ details, specs, description, captions, cleaned photos, price. Then they **send i
 2. ✅ **Detect:** item, category, brand/model, condition cues, listing type; flags missing evidence ("send the About screen", "show the bill").
 3. ✅ **Smart questions:** only what matters for this type, all skippable, prefilled from photos/voice (question sets in `handoff/02-product-spec.md`).
    ➕ Homemade adds an **availability** setting: *Weekly batches / By request / One-off* (+ order-by day). Demo it on the homemade item.
-4. ✅ **Photo studio:** crop, straighten, exposure/white balance, background clean-up + shadow, platform sizes, one untouched original. Honesty rule applies. ❓ Tool: C3.
+4. ✅ **Photo studio (C3 decided, Oct 24):** plain canvas code, no AI and no segmentation. A conservative crop around the item
+   (always keeps ≥65% of the frame), a colour-safe light fix applied evenly to the whole photo (brightness levels on one curve,
+   gentle lift for dark photos, cast correction capped at ±6%), framed on a flat backdrop, platform sizes, one untouched original.
+   No background removal: it fails on hair, wigs, cables and fabric, and an on-phone model is ~40 MB and froze the page in testing.
 5. **Price:** ✅ ₹ range + recommended figure + reasons, labelled as an estimate, **plus comparable listings with links in P0**.
    Comps come from web search (no scraping). Show only links that resolve and contain a ₹ figure, up to 5, and show none rather than a bad one.
 6. **Packs per channel:** ✅ copy + images + hashtags. ➕ **Place:** the AI ranks channels for this item and highlights the top 2. ✅ Every channel gets a full pack (§7).
@@ -99,7 +102,7 @@ The client secret stays server-side.
 
 ## 10. Stack
 ✅ **Decided:** Next.js (App Router) + TS + Tailwind + shadcn/ui on **Render** · **Supabase** (Postgres + Storage for images + Auth) ·
-Claude Sonnet 5.5 for vision, questions, price and copy (structured JSON) · segmentation for photos (C3) · web search for comps ·
+Claude Sonnet 5.5 for vision, questions, price and copy (structured JSON) · canvas crop + light fix for photos (C3, no AI) · web search for comps ·
 ElevenLabs STT (P1) · Pine Labs payment links.
 **Sign-up:** Supabase Auth with **Google sign-in** (one tap on Android), plus name + WhatsApp number on the profile.
 Don't rely on Supabase's built-in email sender for magic links: it's heavily rate-limited unless we add our own SMTP. No SMS OTP.
@@ -126,7 +129,7 @@ What each source doc proposed, for reference:
 |---|---|---|---|---|
 | ~~C1~~ | Name | ✅ **Sell It** | | |
 | ~~C2~~ | Paywall / payments | ✅ Free for signed-up users; Pro = product video; Pine Labs payment links (§9) | | |
-| **C3** | Photo tool | Segmentation, no generative editing | Nano Banana background replace | Segmentation. A generative "background swap" can still redraw the product, which breaks the honesty rule in CLAUDE.md. |
+| **C3** | Photo tool | ✅ **Decided:** crop + colour-safe light fix in canvas code; no segmentation, no generative editing | | Background removal fails on hair/wigs/cables and the on-phone model (~40 MB) froze the page in testing. See §4. |
 | ~~C4~~ | Channel scope | ✅ All channels; WhatsApp/Instagram one-tap; OLX/Marketplace guided copy-paste; direct posting later (§7) | | |
 | ~~C5~~ | Price citations | ✅ **Comps in P0** (§4 step 5). Still applies: no seeded table unless every row is a real, sourced listing. "Nearby society groups" can't be sourced. | | |
 | **C6** | Languages | En + Hinglish; Hindi/Kannada P1 | En + Hindi; Marathi/Tamil stretch | P0: En + Hinglish + Hindi (it's only LLM output). P1: Kannada (we're in Bengaluru) ahead of Marathi. The BechDe demo script has a Marathi caption, so change it. |

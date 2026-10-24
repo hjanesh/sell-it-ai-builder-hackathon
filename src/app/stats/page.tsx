@@ -33,17 +33,17 @@ export default async function Stats() {
     <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">
       <AutoRefresh seconds={20} />
       <header className="flex items-center justify-between">
-        <Link href="/" className="text-xl font-extrabold tracking-tight">
-          Sell<span className="text-brand"> It</span>
+        <Link href="/" className="text-xl font-semibold tracking-tight">
+          Sell<span className="text-pink"> It</span>
         </Link>
         <span className="text-xs text-muted">Live · refreshes every 20s{usingSupabase() ? "" : " · local store"}</span>
       </header>
-      <h1 className="mt-6 text-3xl font-bold">Today on Sell It</h1>
+      <h1 className="mt-6 text-3xl font-medium tracking-tight">Today on Sell It</h1>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {tiles.map(([label, v]) => (
-          <div key={label} className="rounded-3xl border border-line bg-surface p-4">
+          <div key={label} className="rounded-2xl border border-line bg-surface p-4">
             <p className="text-sm text-muted">{label}</p>
-            <p className="mt-1 text-3xl font-bold tabular-nums">{v}</p>
+            <p className="mt-1 text-3xl font-medium tracking-tight tabular-nums">{v}</p>
           </div>
         ))}
       </div>

@@ -168,11 +168,11 @@ export default function Flow() {
             ))}
           </div>
           {detect.missingEvidence.length > 0 && (
-            <div className="mt-4 rounded-2xl bg-amber-50 p-3 text-sm text-amber-900">
+            <div className="mt-4 rounded-2xl bg-peach/40 p-3 text-sm text-foreground">
               <p className="font-semibold">Buyers trust listings more with:</p>
               <ul className="mt-1 list-disc pl-5">
-                {detect.missingEvidence.map((m) => (
-                  <li key={m}>{m}</li>
+                {detect.missingEvidence.map((m, i) => (
+                  <li key={i}>{m}</li>
                 ))}
               </ul>
               {photos.length < 6 && (
@@ -193,8 +193,8 @@ export default function Flow() {
                 <label className="font-medium">{q.label}</label>
                 {q.kind === "chips" && q.options.length > 0 ? (
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {q.options.map((o) => (
-                      <Chip key={o} active={answers[q.id] === o} onClick={() => setAnswers({ ...answers, [q.id]: answers[q.id] === o ? "" : o })}>
+                    {q.options.map((o, i) => (
+                      <Chip key={i} active={answers[q.id] === o} onClick={() => setAnswers({ ...answers, [q.id]: answers[q.id] === o ? "" : o })}>
                         {o}
                       </Chip>
                     ))}
@@ -272,10 +272,10 @@ export default function Flow() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-3xl font-bold leading-tight">What are you selling?</h1>
+        <h1 className="text-3xl font-medium tracking-tight leading-tight">What are you selling?</h1>
         <p className="mt-1 text-muted">Snap a photo. Add a line about it. We&apos;ll do the rest.</p>
       </div>
-      {error && <p className="rounded-2xl bg-red-50 p-3 text-sm text-red-800">{error}</p>}
+      {error && <p className="rounded-2xl bg-error/10 p-3 text-sm text-error">{error}</p>}
       <Card className="p-3">
         {photos.length === 0 ? (
           <button

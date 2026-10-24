@@ -57,16 +57,16 @@ export default async function ListingPage({ params }: PageProps<"/l/[slug]">) {
 
       <div className="flex flex-col gap-4 px-4 pt-4">
         <div className="flex flex-wrap gap-2 text-xs font-semibold">
-          <span className="rounded-full bg-teal-50 px-3 py-1 text-brand">{TYPE_LABEL[listing.listing_type] ?? listing.listing_type}</span>
-          {data.availability && <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-800">{AVAIL_LABEL[data.availability]}</span>}
-          {location && <span className="rounded-full bg-stone-100 px-3 py-1">📍 {location}</span>}
+          <span className="rounded-full bg-lavender/40 px-3 py-1 text-brand">{TYPE_LABEL[listing.listing_type] ?? listing.listing_type}</span>
+          {data.availability && <span className="rounded-full bg-accent/30 px-3 py-1 text-foreground">{AVAIL_LABEL[data.availability]}</span>}
+          {location && <span className="rounded-full bg-cream px-3 py-1">📍 {location}</span>}
         </div>
-        <h1 className="text-2xl font-bold leading-tight">{page.headline || listing.title}</h1>
-        <p className="text-3xl font-extrabold">₹{formatINR(listing.price)}</p>
+        <h1 className="text-2xl font-medium tracking-tight leading-tight">{page.headline || listing.title}</h1>
+        <p className="text-3xl font-medium tracking-tight">₹{formatINR(listing.price)}</p>
         <p className="whitespace-pre-wrap">{fill(page.description)}</p>
 
         {details.length > 0 && (
-          <section className="rounded-3xl border border-line bg-surface p-4">
+          <section className="rounded-2xl border border-line bg-surface p-4">
             <h2 className="font-semibold">Details</h2>
             <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
               {details.map(([k, v]) => (
@@ -80,7 +80,7 @@ export default async function ListingPage({ params }: PageProps<"/l/[slug]">) {
         )}
 
         {page.faq.length > 0 && (
-          <section className="rounded-3xl border border-line bg-surface p-4">
+          <section className="rounded-2xl border border-line bg-surface p-4">
             <h2 className="font-semibold">Questions buyers ask</h2>
             <div className="mt-2 flex flex-col gap-3 text-sm">
               {page.faq.map((f) => (

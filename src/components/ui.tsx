@@ -8,14 +8,14 @@ export function Button({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "ghost" }) {
   const styles = {
-    primary: "bg-brand text-brand-ink shadow-sm active:scale-[0.98] disabled:opacity-50",
+    primary: "bg-brand text-brand-ink active:bg-[#1f1f1f] disabled:bg-[#e5e5e5] disabled:text-muted",
     secondary: "bg-surface text-foreground border border-line active:scale-[0.98] disabled:opacity-50",
     ghost: "text-brand underline-offset-4 hover:underline",
   }[variant];
   return (
     <button
       {...props}
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 text-base font-semibold transition ${styles} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-base font-semibold transition ${styles} ${className}`}
     />
   );
 }
@@ -34,8 +34,17 @@ export function Chip({ active, onClick, children }: { active?: boolean; onClick?
   );
 }
 
-export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-3xl border border-line bg-surface p-4 shadow-sm ${className}`}>{children}</section>;
+const TONES = {
+  plain: "border border-line bg-surface",
+  cream: "bg-cream",
+  lavender: "bg-lavender",
+  peach: "bg-peach",
+  mint: "bg-mint",
+} as const;
+
+/** Content card (hairline on canvas) or one of the design's single-colour feature cards. */
+export function Card({ children, className = "", tone = "plain" }: { children: ReactNode; className?: string; tone?: keyof typeof TONES }) {
+  return <section className={`rounded-2xl p-4 ${TONES[tone]} ${className}`}>{children}</section>;
 }
 
 export function CopyButton({ text, label = "Copy", onCopied }: { text: string; label?: string; onCopied?: () => void }) {
@@ -49,7 +58,7 @@ export function CopyButton({ text, label = "Copy", onCopied }: { text: string; l
         onCopied?.();
         setTimeout(() => setDone(false), 1500);
       }}
-      className={`shrink-0 rounded-xl px-3 py-2 text-sm font-semibold ${done ? "bg-emerald-100 text-emerald-800" : "bg-stone-100 text-foreground"}`}
+      className={`shrink-0 rounded-xl px-3 py-2 text-sm font-semibold ${done ? "bg-mint text-foreground" : "bg-cream-strong text-foreground"}`}
     >
       {done ? "Copied ✓" : label}
     </button>

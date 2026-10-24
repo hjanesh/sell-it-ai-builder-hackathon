@@ -55,16 +55,18 @@ export default function Results(props: Props) {
   const [showFeedback, setShowFeedback] = useState(false);
   const feedbackAsked = useRef(false);
   const publishing = useRef<Promise<string> | null>(null);
+  // The written headline includes the seller's answers (brand, model); detect.title is only the first guess.
+  const title = packs?.listingPage.headline || detect.title;
 
   const story = useMemo(
     () =>
       studio
         ? compose(studio.storyBase, "story", studio.storyBox, {
-            title: detect.title,
+            title,
             price: priceValue ? `₹${formatINR(priceValue)}` : "",
           })
         : null,
-    [studio, detect.title, priceValue],
+    [studio, title, priceValue],
   );
 
   const listingUrl = slug ? `${window.location.origin}/l/${slug}` : null;
@@ -87,7 +89,7 @@ export default function Results(props: Props) {
       body: JSON.stringify({
         seller: props.seller,
         listingType: detect.listingType,
-        title: detect.title,
+        title,
         price: priceValue ?? price?.recommended ?? 0,
         images: [...studio.square, studio.original],
         data: {
@@ -131,7 +133,7 @@ export default function Results(props: Props) {
   if (props.packsError) {
     return (
       <Card>
-        <p className="text-red-800">{props.packsError}</p>
+        <p className="text-error">{props.packsError}</p>
         <Button className="mt-3 w-full" onClick={props.onRetry}>
           Try again
         </Button>
@@ -146,7 +148,7 @@ export default function Results(props: Props) {
     <div className="flex flex-col gap-4 pb-10">
       <div>
         <p className="text-sm font-semibold uppercase tracking-wide text-brand">Your listing is ready</p>
-        <h1 className="mt-1 text-2xl font-bold leading-tight">{detect.title}</h1>
+        <h1 className="mt-1 text-2xl font-medium tracking-tight leading-tight">{title}</h1>
         <p className="mt-1 text-muted">{packs.positioning}</p>
       </div>
 
@@ -165,7 +167,7 @@ export default function Results(props: Props) {
             </figure>
           </>
         ) : (
-          <div className="h-64 w-64 animate-pulse rounded-2xl bg-stone-200" />
+          <div className="h-64 w-64 animate-pulse rounded-2xl bg-cream-strong" />
         )}
       </div>
       <p className="-mt-2 text-xs text-muted">Photos cleaned up (crop, light, background). The item itself is never edited.</p>
@@ -179,9 +181,9 @@ export default function Results(props: Props) {
         {price ? (
           <>
             <div className="mt-2 flex items-center gap-2">
-              <span className="text-3xl font-bold">₹</span>
+              <span className="text-3xl font-medium tracking-tight">₹</span>
               <input
-                className="w-40 rounded-xl border border-line px-3 py-1 text-3xl font-bold"
+                className="w-40 rounded-xl border border-line px-3 py-1 text-3xl font-medium tracking-tight"
                 inputMode="numeric"
                 value={priceValue ?? ""}
                 onChange={(e) => setPriceValue(Number(e.target.value.replace(/\D/g, "")) || null)}
@@ -189,17 +191,17 @@ export default function Results(props: Props) {
               <span className="text-xs text-muted">Edit it, every post updates</span>
             </div>
             <ul className="mt-3 list-disc pl-5 text-sm text-muted">
-              {price.reasons.map((r) => (
-                <li key={r}>{r}</li>
+              {price.reasons.map((r, i) => (
+                <li key={i}>{r}</li>
               ))}
             </ul>
             {price.comps.length > 0 ? (
               <div className="mt-3">
                 <p className="text-sm font-semibold">Similar listings we found</p>
                 <ul className="mt-1 flex flex-col gap-1">
-                  {price.comps.map((c) => (
-                    <li key={c.url}>
-                      <a href={c.url} target="_blank" rel="noreferrer" className="flex justify-between gap-3 rounded-xl bg-stone-50 px-3 py-2 text-sm">
+                  {price.comps.map((c, i) => (
+                    <li key={i}>
+                      <a href={c.url} target="_blank" rel="noreferrer" className="flex justify-between gap-3 rounded-xl bg-cream px-3 py-2 text-sm">
                         <span className="line-clamp-1">
                           <span className="font-medium">{c.source}</span> · {c.title}
                         </span>
@@ -215,9 +217,9 @@ export default function Results(props: Props) {
           </>
         ) : props.priceError ? (
           <div className="mt-2 flex flex-col gap-2">
-            <p className="text-sm text-red-800">{props.priceError}</p>
+            <p className="text-sm text-error">{props.priceError}</p>
             <input
-              className="w-40 rounded-xl border border-line px-3 py-1 text-2xl font-bold"
+              className="w-40 rounded-xl border border-line px-3 py-1 text-2xl font-medium tracking-tight"
               inputMode="numeric"
               placeholder="Your price"
               value={priceValue ?? ""}
@@ -230,20 +232,20 @@ export default function Results(props: Props) {
       </Card>
 
       {/* Place */}
-      <Card>
+      <Card tone="lavender">
         <h2 className="text-lg font-semibold">Best places to post this</h2>
         <ol className="mt-2 flex flex-col gap-2">
           {top.map((p, i) => (
             <li key={p.channel} className="flex gap-3">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-bold text-brand-ink">{i + 1}</span>
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-brand-ink">{i + 1}</span>
               <span>
                 <span className="font-semibold">{CHANNEL_LABEL[p.channel]}</span>
-                <span className="text-muted">: {p.reason}</span>
+                <span className="text-body">: {p.reason}</span>
               </span>
             </li>
           ))}
         </ol>
-        {packs.alsoConsider.length > 0 && <p className="mt-2 text-sm text-muted">Also worth trying: {packs.alsoConsider.join(", ")}</p>}
+        {packs.alsoConsider.length > 0 && <p className="mt-2 text-sm text-body">Also worth trying: {packs.alsoConsider.join(", ")}</p>}
       </Card>
 
       {/* Channel packs */}
@@ -266,8 +268,11 @@ export default function Results(props: Props) {
           steps={[
             { title: "Open OLX and tap + SELL", hint: "Use the OLX app if you have it." },
             { title: "Choose the category", value: packs.olx.categoryPath },
-            ...packs.olx.details.map((d) => ({ title: d.field, value: d.value })),
-            { title: "Ad title", value: packs.olx.title },
+            // Price, location, title and description have their own steps below.
+            ...packs.olx.details
+              .filter((d) => !/price|location|title|description/i.test(d.field))
+              .map((d) => ({ title: d.field, value: fill(d.value) })),
+            { title: "Ad title", value: fill(packs.olx.title) },
             { title: "Describe what you are selling", value: fill(packs.olx.description) },
             { title: "Set a price", value: priceValue ? String(priceValue) : "" },
             { title: "Upload photos", hint: "Save the photos below first, then pick them in OLX.", photos: true },
@@ -285,7 +290,7 @@ export default function Results(props: Props) {
           steps={[
             { title: "Open Facebook → Marketplace → Create new listing → Item for sale" },
             { title: "Add photos", hint: "Save the photos below first.", photos: true },
-            { title: "Title", value: packs.marketplace.title },
+            { title: "Title", value: fill(packs.marketplace.title) },
             { title: "Price", value: priceValue ? String(priceValue) : "" },
             { title: "Category", value: packs.marketplace.category },
             { title: "Condition", value: packs.marketplace.condition },
@@ -320,7 +325,7 @@ export default function Results(props: Props) {
           disabled={!studio}
           onClick={async () => {
             if (!studio) return;
-            const name = detect.title.replace(/[^\w]+/g, "-").slice(0, 40);
+            const name = title.replace(/[^\w]+/g, "-").slice(0, 40);
             const blob = async (d: string) => (await fetch(d)).blob();
             await downloadZip(name, [
               ...(await Promise.all(studio.square.map(async (d, i) => ({ path: `square/photo-${i + 1}.jpg`, data: await blob(d) })))),
@@ -454,7 +459,7 @@ function InstagramPack({
         ))}
       </div>
       {format === "post" ? (
-        <pre className="mt-3 max-h-60 overflow-auto whitespace-pre-wrap rounded-2xl bg-stone-50 p-3 font-sans text-sm">{caption}</pre>
+        <pre className="mt-3 max-h-60 overflow-auto whitespace-pre-wrap rounded-2xl bg-cream p-3 font-sans text-sm">{caption}</pre>
       ) : (
         <p className="mt-3 text-sm text-muted">Story text on the image: “{packs.instagram.storyText}”. Add a link sticker with your listing link.</p>
       )}
@@ -516,9 +521,9 @@ function GuidedPost({
       <p className="mt-1 text-sm text-muted">Keep this screen open. Follow {platform}&apos;s screens and copy each value as you go.</p>
       <ol className="mt-3 flex flex-col gap-2">
         {steps.map((s, i) => (
-          <li key={i} className={`rounded-2xl border p-3 ${done.has(i) ? "border-emerald-300 bg-emerald-50" : "border-line"}`}>
+          <li key={i} className={`rounded-2xl border p-3 ${done.has(i) ? "border-mint bg-mint/30" : "border-line"}`}>
             <div className="flex items-start gap-3">
-              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stone-200 text-xs font-bold">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cream-strong text-xs font-semibold">
                 {done.has(i) ? "✓" : i + 1}
               </span>
               <div className="min-w-0 flex-1">
@@ -527,7 +532,7 @@ function GuidedPost({
                 {s.value && <p className="mt-1 line-clamp-4 whitespace-pre-wrap text-sm">{s.value}</p>}
                 {s.photos && (
                   <button
-                    className="mt-2 rounded-xl bg-stone-100 px-3 py-2 text-sm font-semibold"
+                    className="mt-2 rounded-xl bg-cream px-3 py-2 text-sm font-semibold"
                     onClick={async () => {
                       const files = await Promise.all(images.map((d, j) => dataUrlToFile(d, `${platform.toLowerCase()}-${j + 1}.jpg`)));
                       await shareFiles({ files });
@@ -581,7 +586,7 @@ function FeedbackSheet({ slug, onClose }: { slug: string | null; onClose: () => 
                 <button
                   key={t}
                   onClick={() => setThumbs(t)}
-                  className={`flex-1 rounded-2xl border py-3 text-3xl ${thumbs === t ? "border-brand bg-teal-50" : "border-line"}`}
+                  className={`flex-1 rounded-2xl border py-3 text-3xl ${thumbs === t ? "border-brand bg-lavender/40" : "border-line"}`}
                 >
                   {t === "up" ? "👍" : "👎"}
                 </button>
