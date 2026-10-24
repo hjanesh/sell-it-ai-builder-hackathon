@@ -49,7 +49,6 @@ export default function Flow() {
   const fileInput = useRef<HTMLInputElement>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const session = useSession();
-  const [guest, setGuest] = useState(false);
 
   async function addFiles(files: FileList | null) {
     if (!files) return;
@@ -125,10 +124,10 @@ export default function Flow() {
 
   const sellerValid = seller.name.trim().length > 0 && seller.whatsapp.replace(/\D/g, "").length >= 10;
 
-  // Sign in first (Google), so every listing lands in the seller's account. Guests can still go ahead.
-  if (authEnabled() && !guest && step === "capture" && photos.length === 0) {
+  // Everyone signs in first (Google), so every listing lands in the seller's account.
+  if (authEnabled() && step === "capture" && photos.length === 0) {
     if (session === undefined) return <Spinner label="Loading…" />;
-    if (session === null) return <SignIn onGuest={() => setGuest(true)} />;
+    if (session === null) return <SignIn />;
   }
 
   if (step === "detecting") return <Spinner label="Looking at your photos…" />;
@@ -375,7 +374,7 @@ function toggleMulti(v: string | undefined, option: string): string {
   return (set.includes(option) ? set.filter((x) => x !== option) : [...set, option]).join(", ");
 }
 
-function SignIn({ onGuest }: { onGuest: () => void }) {
+function SignIn() {
   return (
     <div className="flex flex-col gap-6 pt-6">
       <div>
@@ -403,9 +402,7 @@ function SignIn({ onGuest }: { onGuest: () => void }) {
         </svg>
         Continue with Google
       </Button>
-      <button type="button" className="text-sm text-muted underline" onClick={onGuest}>
-        Try it without an account
-      </button>
+      <p className="text-center text-sm text-muted">Free. We only use your name and email to keep your listings together.</p>
     </div>
   );
 }
