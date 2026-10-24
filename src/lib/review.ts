@@ -36,6 +36,12 @@ export async function reviewListing(listing: Listing): Promise<Review> {
     `Seller's note: ${d.detect?.caption ?? ""} ${Object.values(d.answers ?? {}).join("; ")}`.trim(),
     `Photo observations: ${(d.detect?.conditionCues ?? []).join("; ")}`,
     `Comparable prices found: ${(price?.comps ?? []).map((c) => `${c.source} ${c.priceText}`).join("; ") || "none"}`,
+    "",
+    // summary + fix_type are what AgenticOrg's approval card displays to the human approver.
+    "Return ONLY this JSON:",
+    '{"status": "approved" | "flagged", "reasons": ["short, specific reason", ...],',
+    ' "summary": "One sentence for the human approver: which listing, what you decided and why.",',
+    ' "fix_type": "approve_listing" | "hold_listing"}',
   ].join("\n");
 
   const run = await runAgent(LISTING_REVIEWER, { task }, listing.slug);
@@ -43,7 +49,13 @@ export async function reviewListing(listing: Listing): Promise<Review> {
   if (run.status === "error" || run.status === "failed" || run.status === "budget_exceeded") {
     return { status: "unchecked", reasons: ["Reviewer unavailable"], confidence: null, decidedBy: "agent", decidedAt: now };
   }
-  const out = (run.output ?? {}) as { status?: string; reasons?: string[]; processing_trace?: string[]; escalation_reason?: string | null };
+  const out = (run.output ?? {}) as {
+    status?: string;
+    reasons?: string[];
+    summary?: string;
+    processing_trace?: string[];
+    escalation_reason?: string | null;
+  };
   const reasons = out.reasons ?? (out.processing_trace ?? []).slice(-3);
   const raw = (run.raw ?? {}) as { correlation_id?: string; run_id?: string };
   const agentRunId = raw.correlation_id ?? raw.run_id ?? null;
@@ -52,7 +64,7 @@ export async function reviewListing(listing: Listing): Promise<Review> {
   const approved = out.status === "approved";
   return {
     status: approved ? "approved" : "pending",
-    reasons: approved ? reasons : [out.escalation_reason ?? "", ...reasons].filter(Boolean),
+    reasons: approved ? reasons : [out.summary ?? out.escalation_reason ?? "", ...reasons].filter(Boolean),
     confidence: run.confidence,
     decidedBy: "agent",
     decidedAt: now,
