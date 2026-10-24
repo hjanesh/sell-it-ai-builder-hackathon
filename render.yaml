@@ -3,7 +3,7 @@ services:
   - type: web
     name: sell-it
     runtime: node
-    plan: starter
+    plan: free # switch to starter once Render credits are on the account (free sleeps after 15 min idle)
     region: singapore
     buildCommand: npm ci && npm run build
     startCommand: npm start
