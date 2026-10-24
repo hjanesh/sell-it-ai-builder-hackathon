@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Channel, DetectResult, Language, PacksResult, PriceResult } from "@/lib/schemas";
 import { compose, dataUrlToFile, type Box } from "@/lib/images";
 import { downloadZip, fillPrice, formatINR, shareFiles, track } from "@/lib/share";
+import { costFloor, priceCards, type Cost } from "@/lib/pricing";
 import { Button, Card, Chip, CopyButton, Spinner, copyText } from "./ui";
 import type { Seller } from "./Flow";
 
@@ -44,9 +45,13 @@ const LANG_LABEL: Record<Language, string> = { en: "English", hinglish: "Hinglis
 
 export default function Results(props: Props) {
   const { detect, studio, price, packs } = props;
-  // The seller's edit wins; until then use the suggested price.
+  // Homemade cost floor (materials + hours); the cards never go below it.
+  const [cost, setCost] = useState<Cost>({ materials: 0, hours: 0 });
+  const floor = costFloor(cost);
+  const cards = price ? priceCards(price, floor) : null;
+  // The seller's pick or edit wins; until then use the recommended card.
   const [editedPrice, setPriceValue] = useState<number | null>(null);
-  const priceValue = editedPrice ?? price?.recommended ?? null;
+  const priceValue = editedPrice ?? cards?.recommended ?? floor ?? null;
   // Default to the best-ranked channel until the seller picks a tab.
   const [tabChoice, setTab] = useState<(typeof TABS)[number] | null>(null);
   const bestTab = packs?.place.find((p) => p.channel !== "listing_page")?.channel as (typeof TABS)[number] | undefined;
@@ -174,32 +179,45 @@ export default function Results(props: Props) {
 
       {/* Price */}
       <Card>
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-lg font-semibold">Fair price</h2>
-          {price && <span className="text-sm text-muted">Range ₹{formatINR(price.low)} – ₹{formatINR(price.high)}</span>}
-        </div>
-        {price ? (
+        <h2 className="text-lg font-semibold">What to charge</h2>
+        {cards ? (
           <>
-            <div className="mt-2 flex items-center gap-2">
-              <span className="text-3xl font-medium tracking-tight">₹</span>
-              <input
-                className="w-40 rounded-xl border border-line px-3 py-1 text-3xl font-medium tracking-tight"
-                inputMode="numeric"
-                value={priceValue ?? ""}
-                onChange={(e) => setPriceValue(Number(e.target.value.replace(/\D/g, "")) || null)}
-              />
-              <span className="text-xs text-muted">Edit it, every post updates</span>
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              {(
+                [
+                  ["Sell fast", cards.fast, "Goes in a day or two"],
+                  ["Recommended", cards.recommended, "Fair, sells in a week"],
+                  ["Best price", cards.best, "If you can wait"],
+                ] as const
+              ).map(([label, value, hint]) => {
+                const active = priceValue === value;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setPriceValue(value)}
+                    className={`flex min-h-24 flex-col items-start justify-between rounded-xl border p-3 text-left transition ${
+                      active ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface"
+                    }`}
+                  >
+                    <span className={`text-xs font-semibold ${active ? "text-brand-ink" : "text-muted"}`}>{label}</span>
+                    <span className="text-xl font-medium tracking-tight">₹{formatINR(value)}</span>
+                    <span className={`text-[11px] leading-tight ${active ? "text-brand-ink/80" : "text-muted"}`}>{hint}</span>
+                  </button>
+                );
+              })}
             </div>
-            <ul className="mt-3 list-disc pl-5 text-sm text-muted">
-              {price.reasons.map((r, i) => (
+            <PriceInput value={priceValue} onChange={setPriceValue} />
+            <ul className="mt-3 list-disc pl-5 text-sm text-body">
+              {price!.reasons.map((r, i) => (
                 <li key={i}>{r}</li>
               ))}
             </ul>
-            {price.comps.length > 0 ? (
+            {price!.comps.length > 0 ? (
               <div className="mt-3">
-                <p className="text-sm font-semibold">Similar listings we found</p>
+                <p className="text-sm font-semibold">Similar listings we found today</p>
                 <ul className="mt-1 flex flex-col gap-1">
-                  {price.comps.map((c, i) => (
+                  {price!.comps.map((c, i) => (
                     <li key={i}>
                       <a href={c.url} target="_blank" rel="noreferrer" className="flex justify-between gap-3 rounded-xl bg-cream px-3 py-2 text-sm">
                         <span className="line-clamp-1">
@@ -218,17 +236,12 @@ export default function Results(props: Props) {
         ) : props.priceError ? (
           <div className="mt-2 flex flex-col gap-2">
             <p className="text-sm text-error">{props.priceError}</p>
-            <input
-              className="w-40 rounded-xl border border-line px-3 py-1 text-2xl font-medium tracking-tight"
-              inputMode="numeric"
-              placeholder="Your price"
-              value={priceValue ?? ""}
-              onChange={(e) => setPriceValue(Number(e.target.value.replace(/\D/g, "")) || null)}
-            />
+            <PriceInput value={priceValue} onChange={setPriceValue} />
           </div>
         ) : (
           <p className="mt-2 animate-pulse text-muted">Checking real listings for a fair price…</p>
         )}
+        {detect.listingType === "homemade" && <CostCalculator cost={cost} floor={floor} onChange={setCost} />}
       </Card>
 
       {/* Place */}
@@ -624,6 +637,51 @@ function FeedbackSheet({ slug, onClose }: { slug: string | null; onClose: () => 
           </>
         )}
       </div>
+    </div>
+  );
+}
+
+function PriceInput({ value, onChange }: { value: number | null; onChange: (v: number | null) => void }) {
+  return (
+    <label className="mt-3 flex items-center gap-2">
+      <span className="whitespace-nowrap text-sm text-muted">Or type ₹</span>
+      <input
+        className="w-32 rounded-xl border border-line bg-surface px-3 py-2 text-lg font-medium"
+        inputMode="numeric"
+        value={value ?? ""}
+        onChange={(e) => onChange(Number(e.target.value.replace(/\D/g, "")) || null)}
+      />
+      <span className="text-xs text-muted">Every post updates</span>
+    </label>
+  );
+}
+
+/** Homemade only: what it costs to make, so we never suggest a price below cost. */
+function CostCalculator({ cost, floor, onChange }: { cost: Cost; floor: number | null; onChange: (c: Cost) => void }) {
+  const field = (key: keyof Cost, label: string, placeholder: string) => (
+    <label className="flex flex-1 flex-col gap-1 text-sm">
+      <span className="text-muted">{label}</span>
+      <input
+        className="w-full rounded-xl border border-line bg-surface px-3 py-2"
+        inputMode="decimal"
+        placeholder={placeholder}
+        value={cost[key] || ""}
+        onChange={(e) => onChange({ ...cost, [key]: Number(e.target.value.replace(/[^\d.]/g, "")) || 0 })}
+      />
+    </label>
+  );
+  return (
+    <div className="mt-4 rounded-xl bg-cream p-3">
+      <p className="text-sm font-semibold">What does one cost you to make?</p>
+      <div className="mt-2 flex gap-2">
+        {field("materials", "Materials ₹", "e.g. 200")}
+        {field("hours", "Your time (hours)", "e.g. 2")}
+      </div>
+      <p className="mt-2 text-xs text-muted">
+        {floor
+          ? `Your cost plus a 30% margin: ₹${formatINR(floor)}. We won't suggest less than this.`
+          : "Counts your time at ₹150/hour plus 20% for gas and packaging, then adds a 30% margin."}
+      </p>
     </div>
   );
 }
