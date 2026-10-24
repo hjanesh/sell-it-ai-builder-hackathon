@@ -64,17 +64,38 @@ export default function VoiceNote({ onText }: { onText: (text: string, language:
 
   return (
     <div className="mt-3">
-      <button
-        type="button"
-        disabled={state === "working"}
-        onClick={() => (state === "recording" ? recorder.current?.stop() : start())}
-        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition ${
-          state === "recording" ? "bg-pink text-white" : "border border-line bg-surface text-foreground"
-        }`}
-      >
-        <span className={`h-2.5 w-2.5 rounded-full ${state === "recording" ? "animate-pulse bg-white" : "bg-pink"}`} />
-        {state === "recording" ? `Stop · 0:${String(seconds).padStart(2, "0")}` : state === "working" ? "Listening…" : "Say it instead (any language)"}
-      </button>
+      {state === "recording" ? (
+        <button
+          type="button"
+          onClick={() => recorder.current?.stop()}
+          className="flex w-full items-center justify-between gap-3 rounded-xl bg-pink px-4 py-3 text-left text-white"
+        >
+          <span className="flex items-center gap-3">
+            <span className="relative flex h-3 w-3">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-white" />
+            </span>
+            <span className="font-semibold">Recording… speak now</span>
+          </span>
+          <span className="flex items-center gap-2 text-sm font-semibold tabular-nums">
+            0:{String(seconds).padStart(2, "0")} / 1:00 · Tap to stop
+          </span>
+        </button>
+      ) : state === "working" ? (
+        <div className="flex w-full items-center gap-3 rounded-xl bg-cream px-4 py-3" role="status">
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-line border-t-brand" />
+          <span className="text-sm font-semibold">Turning your voice note into text…</span>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={start}
+          className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface px-4 text-sm font-semibold"
+        >
+          <span className="h-2.5 w-2.5 rounded-full bg-pink" />
+          Say it instead (any language)
+        </button>
+      )}
       {error && <p className="mt-2 text-sm text-error">{error}</p>}
     </div>
   );

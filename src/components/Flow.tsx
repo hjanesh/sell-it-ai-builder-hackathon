@@ -203,14 +203,17 @@ export default function Flow() {
           <div className="mt-4 flex flex-col gap-5">
             {detect.questions.map((q) => (
               <div key={q.id}>
-                <label className="font-medium">{q.label}</label>
+                <label className="font-medium">
+                  {q.label}
+                  {isMulti(q) && q.options.length > 0 && <span className="ml-2 text-sm font-normal text-muted">Pick all that apply</span>}
+                </label>
                 {(q.kind === "chips" || q.kind === "multi") && q.options.length > 0 ? (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {q.options.map((o, i) => (
                       <Chip
                         key={i}
-                        active={q.kind === "multi" ? splitMulti(answers[q.id]).includes(o) : answers[q.id] === o}
-                        onClick={() => setAnswers({ ...answers, [q.id]: q.kind === "multi" ? toggleMulti(answers[q.id], o) : answers[q.id] === o ? "" : o })}
+                        active={isMulti(q) ? splitMulti(answers[q.id]).includes(o) : answers[q.id] === o}
+                        onClick={() => setAnswers({ ...answers, [q.id]: isMulti(q) ? toggleMulti(answers[q.id], o) : answers[q.id] === o ? "" : o })}
                       >
                         {o}
                       </Chip>
@@ -356,6 +359,11 @@ export default function Flow() {
       </Button>
     </div>
   );
+}
+
+// "What comes with it / issues / features" questions allow several answers even if the AI marked them single-choice.
+function isMulti(q: { kind: string; label: string }): boolean {
+  return q.kind === "multi" || /(comes with|come with|included|include|what else|accessor|have with it|issues|defects|features)/i.test(q.label);
 }
 
 // Multi-select answers are stored as one comma-separated string, so prompts and listings read them as text.
