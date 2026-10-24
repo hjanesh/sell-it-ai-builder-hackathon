@@ -1,0 +1,328 @@
+"use client";
+
+import { useRef, useState } from "react";
+import type { DetectResult, Language, ListingType, PacksResult, PriceResult } from "@/lib/schemas";
+import { compose, enhance, fileToBitmap, toDataUrl, dataUrlToBitmap } from "@/lib/images";
+import { Button, Card, Chip, Spinner } from "./ui";
+import Results, { type Studio } from "./Results";
+
+type Step = "capture" | "detecting" | "questions" | "results";
+type Availability = "one_off" | "weekly_batches" | "by_request";
+export type Seller = { name: string; whatsapp: string };
+
+const TYPE_LABEL: Record<ListingType, string> = { pre_owned: "Pre-owned", new: "New / unused", homemade: "Homemade" };
+const LANG_LABEL: Record<Language, string> = { en: "English", hinglish: "Hinglish", hi: "हिंदी" };
+const AVAIL_LABEL: Record<Availability, string> = { one_off: "One-off", weekly_batches: "Weekly batches", by_request: "By request" };
+
+async function postJSON<T>(url: string, body: unknown): Promise<T> {
+  const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`);
+  return json as T;
+}
+
+function loadSeller(): Seller {
+  try {
+    return JSON.parse(localStorage.getItem("sellit.seller") || "") as Seller;
+  } catch {
+    return { name: "", whatsapp: "" };
+  }
+}
+
+export default function Flow() {
+  const [step, setStep] = useState<Step>("capture");
+  const [error, setError] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [caption, setCaption] = useState("");
+  const [detect, setDetect] = useState<DetectResult | null>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [availability, setAvailability] = useState<Availability | null>(null);
+  const [language, setLanguage] = useState<Language>("en");
+  const [seller, setSeller] = useState<Seller>({ name: "", whatsapp: "" });
+  const [price, setPrice] = useState<PriceResult | null>(null);
+  const [priceError, setPriceError] = useState<string | null>(null);
+  const [packs, setPacks] = useState<PacksResult | null>(null);
+  const [packsError, setPacksError] = useState<string | null>(null);
+  const [studio, setStudio] = useState<Studio | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+
+  async function addFiles(files: FileList | null) {
+    if (!files) return;
+    const next = await Promise.all(
+      Array.from(files).slice(0, 6 - photos.length).map(async (f) => toDataUrl(await fileToBitmap(f))),
+    );
+    const all = [...photos, ...next].slice(0, 6);
+    setPhotos(all);
+    // Seller added a photo on the questions screen: redo the studio set.
+    if (detect) void buildStudio(all, detect.itemBox);
+  }
+
+  async function runDetect() {
+    setError(null);
+    setStep("detecting");
+    try {
+      const d = await postJSON<DetectResult>("/api/detect", { images: photos, caption });
+      setDetect(d);
+      setAnswers(Object.fromEntries(d.questions.filter((q) => q.prefilled).map((q) => [q.id, q.prefilled!])));
+      setAvailability(d.listingType === "homemade" ? "weekly_batches" : null);
+      setSeller(loadSeller());
+      // Photo studio runs in the background while the seller answers questions.
+      void buildStudio(photos, d.itemBox);
+      setStep("questions");
+    } catch (e) {
+      setError((e as Error).message);
+      setStep("capture");
+    }
+  }
+
+  async function buildStudio(list: string[], box: DetectResult["itemBox"]) {
+    const enhanced = await Promise.all(list.map(async (p) => enhance(await dataUrlToBitmap(p))));
+    const boxFor = (i: number) => (i === 0 ? box : undefined);
+    setStudio({
+      original: list[0],
+      square: enhanced.map((c, i) => compose(c, "square", boxFor(i))),
+      olx: enhanced.map((c, i) => compose(c, "olx", boxFor(i))),
+      feed: enhanced.map((c, i) => compose(c, "feed", boxFor(i))),
+      storyBase: enhanced[0],
+      storyBox: box,
+    });
+  }
+
+  function generate(lang: Language = language) {
+    if (!detect) return;
+    localStorage.setItem("sellit.seller", JSON.stringify(seller));
+    const location = answers.location ?? "";
+    const ctx = { detect, caption, answers, availability, location };
+    setStep("results");
+    setPacks(null);
+    setPacksError(null);
+    postJSON<PacksResult>("/api/packs", { ...ctx, language: lang }).then(setPacks, (e) => setPacksError(e.message));
+    if (!price) {
+      setPriceError(null);
+      postJSON<PriceResult>("/api/price", ctx).then(setPrice, (e) => setPriceError(e.message));
+    }
+  }
+
+  function reset() {
+    setStep("capture");
+    setPhotos([]);
+    setCaption("");
+    setDetect(null);
+    setAnswers({});
+    setPrice(null);
+    setPacks(null);
+    setStudio(null);
+    setError(null);
+  }
+
+  const sellerValid = seller.name.trim().length > 0 && seller.whatsapp.replace(/\D/g, "").length >= 10;
+
+  if (step === "detecting") return <Spinner label="Looking at your photos…" />;
+
+  if (step === "results" && detect) {
+    return (
+      <Results
+        detect={detect}
+        answers={answers}
+        availability={availability}
+        language={language}
+        seller={seller}
+        studio={studio}
+        price={price}
+        priceError={priceError}
+        packs={packs}
+        packsError={packsError}
+        onLanguage={(l) => {
+          setLanguage(l);
+          generate(l);
+        }}
+        onRetry={() => generate()}
+        onNew={reset}
+      />
+    );
+  }
+
+  if (step === "questions" && detect) {
+    return (
+      <div className="flex flex-col gap-4 pb-28">
+        <Card>
+          <p className="text-sm text-muted">We think you&apos;re selling</p>
+          <input
+            className="mt-1 w-full rounded-xl border border-line px-3 py-2 text-lg font-semibold"
+            value={detect.title}
+            onChange={(e) => setDetect({ ...detect, title: e.target.value })}
+          />
+          <div className="mt-3 flex flex-wrap gap-2">
+            {(Object.keys(TYPE_LABEL) as ListingType[]).map((t) => (
+              <Chip
+                key={t}
+                active={detect.listingType === t}
+                onClick={() => {
+                  setDetect({ ...detect, listingType: t });
+                  if (t === "homemade" && !availability) setAvailability("weekly_batches");
+                }}
+              >
+                {TYPE_LABEL[t]}
+              </Chip>
+            ))}
+          </div>
+          {detect.missingEvidence.length > 0 && (
+            <div className="mt-4 rounded-2xl bg-amber-50 p-3 text-sm text-amber-900">
+              <p className="font-semibold">Buyers trust listings more with:</p>
+              <ul className="mt-1 list-disc pl-5">
+                {detect.missingEvidence.map((m) => (
+                  <li key={m}>{m}</li>
+                ))}
+              </ul>
+              {photos.length < 6 && (
+                <button className="mt-2 font-semibold text-brand" onClick={() => fileInput.current?.click()}>
+                  + Add a photo
+                </button>
+              )}
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          <h2 className="text-lg font-semibold">A few quick questions</h2>
+          <p className="text-sm text-muted">All optional. Skip anything you don&apos;t know.</p>
+          <div className="mt-4 flex flex-col gap-5">
+            {detect.questions.map((q) => (
+              <div key={q.id}>
+                <label className="font-medium">{q.label}</label>
+                {q.kind === "chips" && q.options.length > 0 ? (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {q.options.map((o) => (
+                      <Chip key={o} active={answers[q.id] === o} onClick={() => setAnswers({ ...answers, [q.id]: answers[q.id] === o ? "" : o })}>
+                        {o}
+                      </Chip>
+                    ))}
+                  </div>
+                ) : (
+                  <input
+                    className="mt-2 w-full rounded-xl border border-line px-3 py-2"
+                    inputMode={q.kind === "number" ? "numeric" : "text"}
+                    value={answers[q.id] ?? ""}
+                    onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
+                  />
+                )}
+              </div>
+            ))}
+            {detect.listingType === "homemade" && (
+              <div>
+                <label className="font-medium">How do you take orders?</label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {(Object.keys(AVAIL_LABEL) as Availability[]).map((a) => (
+                    <Chip key={a} active={availability === a} onClick={() => setAvailability(a)}>
+                      {AVAIL_LABEL[a]}
+                    </Chip>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div>
+              <label className="font-medium">Language for WhatsApp &amp; Instagram</label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {(Object.keys(LANG_LABEL) as Language[]).map((l) => (
+                  <Chip key={l} active={language === l} onClick={() => setLanguage(l)}>
+                    {LANG_LABEL[l]}
+                  </Chip>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card>
+          <h2 className="text-lg font-semibold">Where should buyers reach you?</h2>
+          <p className="text-sm text-muted">Shown on your listing page. We never spam.</p>
+          <div className="mt-3 flex flex-col gap-3">
+            <input
+              className="w-full rounded-xl border border-line px-3 py-2"
+              placeholder="Your name"
+              autoComplete="name"
+              value={seller.name}
+              onChange={(e) => setSeller({ ...seller, name: e.target.value })}
+            />
+            <input
+              className="w-full rounded-xl border border-line px-3 py-2"
+              placeholder="WhatsApp number"
+              inputMode="tel"
+              autoComplete="tel"
+              value={seller.whatsapp}
+              onChange={(e) => setSeller({ ...seller, whatsapp: e.target.value })}
+            />
+          </div>
+        </Card>
+
+        <input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={(e) => addFiles(e.target.files)} />
+        <div className="fixed inset-x-0 bottom-0 border-t border-line bg-background/95 p-4 backdrop-blur">
+          <div className="mx-auto max-w-md">
+            <Button className="w-full" disabled={!sellerValid} onClick={() => generate()}>
+              {sellerValid ? "Make my listing ✨" : "Add your name & WhatsApp to continue"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // capture
+  return (
+    <div className="flex flex-col gap-4">
+      <div>
+        <h1 className="text-3xl font-bold leading-tight">What are you selling?</h1>
+        <p className="mt-1 text-muted">Snap a photo. Add a line about it. We&apos;ll do the rest.</p>
+      </div>
+      {error && <p className="rounded-2xl bg-red-50 p-3 text-sm text-red-800">{error}</p>}
+      <Card className="p-3">
+        {photos.length === 0 ? (
+          <button
+            className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-line text-muted"
+            onClick={() => fileInput.current?.click()}
+          >
+            <span className="text-5xl">📷</span>
+            <span className="font-semibold text-foreground">Take or choose photos</span>
+            <span className="text-sm">Up to 6. The first one is the cover.</span>
+          </button>
+        ) : (
+          <div className="grid grid-cols-3 gap-2">
+            {photos.map((p, i) => (
+              <div key={i} className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={p} alt="" className="aspect-square w-full rounded-xl object-cover" />
+                <button
+                  className="absolute right-1 top-1 h-7 w-7 rounded-full bg-black/60 text-sm text-white"
+                  onClick={() => setPhotos(photos.filter((_, j) => j !== i))}
+                  aria-label="Remove photo"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            {photos.length < 6 && (
+              <button className="aspect-square rounded-xl border-2 border-dashed border-line text-3xl text-muted" onClick={() => fileInput.current?.click()}>
+                +
+              </button>
+            )}
+          </div>
+        )}
+        <input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={(e) => addFiles(e.target.files)} />
+      </Card>
+      <Card>
+        <label className="font-medium">Tell us about it (optional)</label>
+        <textarea
+          className="mt-2 w-full rounded-xl border border-line px-3 py-2"
+          rows={3}
+          placeholder="e.g. iPhone 12, 2 years old, small scratch on back, have the box. Or: fresh dosa batter, 1 L, Koramangala, every Tuesday"
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+        />
+      </Card>
+      <Button disabled={photos.length === 0} onClick={runDetect}>
+        Next →
+      </Button>
+    </div>
+  );
+}

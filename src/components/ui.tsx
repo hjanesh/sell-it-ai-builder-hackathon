@@ -1,0 +1,79 @@
+"use client";
+
+import { useState, type ButtonHTMLAttributes, type ReactNode } from "react";
+
+export function Button({
+  variant = "primary",
+  className = "",
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "ghost" }) {
+  const styles = {
+    primary: "bg-brand text-brand-ink shadow-sm active:scale-[0.98] disabled:opacity-50",
+    secondary: "bg-surface text-foreground border border-line active:scale-[0.98] disabled:opacity-50",
+    ghost: "text-brand underline-offset-4 hover:underline",
+  }[variant];
+  return (
+    <button
+      {...props}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 text-base font-semibold transition ${styles} ${className}`}
+    />
+  );
+}
+
+export function Chip({ active, onClick, children }: { active?: boolean; onClick?: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`min-h-10 rounded-full border px-4 text-sm font-medium transition ${
+        active ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface text-foreground"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <section className={`rounded-3xl border border-line bg-surface p-4 shadow-sm ${className}`}>{children}</section>;
+}
+
+export function CopyButton({ text, label = "Copy", onCopied }: { text: string; label?: string; onCopied?: () => void }) {
+  const [done, setDone] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        await copyText(text);
+        setDone(true);
+        onCopied?.();
+        setTimeout(() => setDone(false), 1500);
+      }}
+      className={`shrink-0 rounded-xl px-3 py-2 text-sm font-semibold ${done ? "bg-emerald-100 text-emerald-800" : "bg-stone-100 text-foreground"}`}
+    >
+      {done ? "Copied ✓" : label}
+    </button>
+  );
+}
+
+export async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    ta.remove();
+  }
+}
+
+export function Spinner({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-4 py-16 text-center">
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-line border-t-brand" />
+      <p className="text-lg font-medium">{label}</p>
+    </div>
+  );
+}
