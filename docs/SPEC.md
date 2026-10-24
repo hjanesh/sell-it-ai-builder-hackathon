@@ -6,6 +6,13 @@ paid through a **sponsor gateway (Pine Labs)** · stack **Render + Supabase** ·
 C12 + C13 decided (§1). C3 decided (§4: no background removal). Still open: C6, C8, C10, C11 (Pro video).
 The teammates' product description is merged into §1. Any further business/theme docs still need merging.
 
+**Pitch v2 reviewed (Hemanth, ~16:00)** (`docs/BechDe-Pitch-v2.md`): kept **Google sign-in** (not phone OTP) ·
+kept **free kit, Pro video paid via Pine Labs** (no ₹49 kit paywall, no personal UPI QR) · **buyer CRM / interest
+capture / retargeting: not today** · **adopted 3 price cards** (Sell fast / Recommended / Best price, from the real
+search range) **+ a materials-and-hours cost calculator for homemade** (sets the floor) · not adopted: Nano Banana
+background swap (C3), seeded "73% of sellers…" social proof from a scrape (no scraping; show only numbers from our own
+real listings), GPT-4o / Vercel / Serper / Shotstack stack. Pitch stats must come from `/stats`.
+
 **Sources merged:** `docs/handoff/` (base plan, ~12:30) + `docs/BechDe-Pitch.md` (teammate pitch, written pre-kickoff).
 If the third teammate has a doc, it still needs merging.
 
@@ -55,6 +62,9 @@ details, specs, description, captions, cleaned photos, price. Then they **send i
    gentle lift for dark photos, cast correction capped at ±6%), framed on a flat backdrop, platform sizes, one untouched original.
    No background removal: it fails on hair, wigs, cables and fabric, and an on-phone model is ~40 MB and froze the page in testing.
 5. **Price:** ✅ ₹ range + recommended figure + reasons, labelled as an estimate, **plus comparable listings with links in P0**.
+   ✅ (v2) Shown as **3 cards: Sell fast (low) / Recommended / Best price (high)**; the seller taps one or edits it. For
+   **homemade**, an optional calculator (materials ₹ + hours) gives a cost floor: `(materials × 1.2 + hours × ₹150) × 1.3`,
+   and the cards never go below it. No price-history graph: nobody publishes past/sold prices, so we'd be inventing it.
    Comps come from web search (no scraping). Show only links that resolve and contain a ₹ figure, up to 5, and show none rather than a bad one.
 6. **Packs per channel:** ✅ copy + images + hashtags. ➕ **Place:** the AI ranks channels for this item and highlights the top 2. ✅ Every channel gets a full pack (§7).
 7. ✅ **Ship:** ZIP download · Web Share / `wa.me` · public listing page `/l/<slug>` with a WhatsApp contact button. Free for every signed-up user.
