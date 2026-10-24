@@ -318,11 +318,18 @@ export default function Results(props: Props) {
           </Card>
 
           {/* Channel packs */}
-          <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+          <div className="grid grid-cols-2 gap-2">
             {TABS.map((t) => (
-              <Chip key={t} active={tab === t} onClick={() => setTab(t)}>
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                className={`min-h-11 rounded-xl border px-3 text-sm font-semibold transition ${
+                  tab === t ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface"
+                }`}
+              >
                 {CHANNEL_LABEL[t]}
-              </Chip>
+              </button>
             ))}
           </div>
 
@@ -649,19 +656,17 @@ function GuidedPost({
   const mark = (i: number) => setDone((d) => new Set(d).add(i));
   return (
     <Card>
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">Post on {platform} in 2 minutes</h2>
-        <a
-          href={openUrl}
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => track("opened_platform", platform.toLowerCase(), null)}
-          className="shrink-0 rounded-xl bg-brand px-3 py-2 text-sm font-semibold text-brand-ink"
-        >
-          Open {platform}
-        </a>
-      </div>
+      <h2 className="text-lg font-semibold">Post on {platform} in 2 minutes</h2>
       <p className="mt-1 text-sm text-muted">Keep this screen open. Follow {platform}&apos;s screens and copy each value as you go.</p>
+      <a
+        href={openUrl}
+        target="_blank"
+        rel="noreferrer"
+        onClick={() => track("opened_platform", platform.toLowerCase(), null)}
+        className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-brand px-4 text-[15px] font-semibold text-brand-ink"
+      >
+        Open {platform} →
+      </a>
       <ol className="mt-3 flex flex-col gap-2">
         {steps.map((s, i) => (
           <li key={i} className={`rounded-2xl border p-3 ${done.has(i) ? "border-mint bg-mint/30" : "border-line"}`}>

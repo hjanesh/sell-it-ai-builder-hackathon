@@ -15,7 +15,7 @@ export function Button({
   return (
     <button
       {...props}
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 text-base font-semibold transition ${styles} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-center text-[15px] font-semibold leading-snug transition ${styles} ${className}`}
     />
   );
 }
@@ -25,7 +25,7 @@ export function Chip({ active, onClick, children }: { active?: boolean; onClick?
     <button
       type="button"
       onClick={onClick}
-      className={`min-h-10 rounded-full border px-4 text-sm font-medium transition ${
+      className={`min-h-10 rounded-full border px-4 py-2 text-left text-sm font-medium leading-snug transition ${
         active ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface text-foreground"
       }`}
     >
@@ -44,7 +44,7 @@ const TONES = {
 
 /** Content card (hairline on canvas) or one of the design's single-colour feature cards. */
 export function Card({ children, className = "", tone = "plain" }: { children: ReactNode; className?: string; tone?: keyof typeof TONES }) {
-  return <section className={`rounded-2xl p-5 ${TONES[tone]} ${className}`}>{children}</section>;
+  return <section className={`rounded-2xl p-4 sm:p-5 ${TONES[tone]} ${className}`}>{children}</section>;
 }
 
 export function CopyButton({ text, label = "Copy", onCopied }: { text: string; label?: string; onCopied?: () => void }) {

@@ -298,13 +298,13 @@ export default function Flow() {
       {error && <p className="rounded-2xl bg-error/10 p-3 text-sm text-error">{error}</p>}
       <Card className="p-3">
         {photos.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border-2 border-dashed border-line px-4 py-8 text-center">
+          <div className="flex flex-col items-center gap-4 rounded-2xl border-2 border-dashed border-line px-3 py-7 text-center">
             <span className="text-5xl">📷</span>
             <span className="text-sm text-muted">Up to 6 photos. The first one is the cover.</span>
             <div className="grid w-full grid-cols-2 gap-2">
-              <Button onClick={() => cameraInput.current?.click()}>Take a photo</Button>
+              <Button onClick={() => cameraInput.current?.click()}>📷 Camera</Button>
               <Button variant="secondary" onClick={() => fileInput.current?.click()}>
-                From gallery
+                🖼 Gallery
               </Button>
             </div>
           </div>
