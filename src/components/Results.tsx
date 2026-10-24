@@ -7,6 +7,7 @@ import { downloadZip, fillPrice, formatINR, shareFiles, track } from "@/lib/shar
 import { costFloor, priceCards, type Cost } from "@/lib/pricing";
 import { Button, Card, Chip, CopyButton, Spinner, copyText } from "./ui";
 import type { Seller } from "./Flow";
+import ProVideo from "./ProVideo";
 
 export type Studio = {
   original: string;
@@ -386,6 +387,8 @@ export default function Results(props: Props) {
               ]}
             />
           )}
+
+          <ProVideo title={title} onInterest={() => track("pro_interest", "pro_video", slug)} />
 
           {/* Listing page */}
           <Card>

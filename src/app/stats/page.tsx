@@ -15,6 +15,7 @@ export default async function Stats() {
   const upRate = rated.length ? Math.round((rated.filter((f) => f.thumbs === "up").length / rated.length) * 100) : null;
   const shares = events.filter((e) => e.name === "shared" || e.name === "exported" || e.name === "copied").length;
   const views = events.filter((e) => e.name === "page_viewed").length;
+  const proInterest = events.filter((e) => e.name === "pro_interest").length;
   const byType = Object.entries(
     listings.reduce<Record<string, number>>((acc, l) => ({ ...acc, [l.listing_type]: (acc[l.listing_type] ?? 0) + 1 }), {}),
   );
@@ -27,6 +28,7 @@ export default async function Stats() {
     ["👍 rate", upRate === null ? "–" : `${upRate}%`],
     ["Shares & exports", shares],
     ["Listing page views", views],
+    ["Want the Pro video", proInterest],
   ] as const;
 
   return (
