@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Channel, DetectResult, Language, PacksResult, PriceResult } from "@/lib/schemas";
 import { compose, dataUrlToFile, type Box } from "@/lib/images";
 import { downloadZip, fillPrice, formatINR, shareFiles, track } from "@/lib/share";
+import { authHeader } from "@/lib/auth";
 import { costFloor, priceCards, type Cost } from "@/lib/pricing";
 import { Button, Card, Chip, CopyButton, Spinner, copyText } from "./ui";
 import type { Seller } from "./Flow";
@@ -103,26 +104,29 @@ export default function Results(props: Props) {
   function ensurePublished(): Promise<string> {
     if (slug) return Promise.resolve(slug);
     if (!studio || !packs) return Promise.reject(new Error("Still preparing your listing…"));
-    publishing.current ??= fetch("/api/listings", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        seller: props.seller,
-        listingType: detect.listingType,
-        title,
-        price: priceValue ?? price?.recommended ?? 0,
-        images: [...studio.square, studio.original],
-        data: {
-          detect,
-          answers: props.answers,
-          availability: props.availability,
-          language: props.language,
-          packs,
-          price: price ? { ...price, recommended: priceValue ?? price.recommended } : null,
-          seller: props.seller,
-        },
-      }),
-    })
+    publishing.current ??= authHeader()
+      .then((auth) =>
+        fetch("/api/listings", {
+          method: "POST",
+          headers: { "content-type": "application/json", ...auth },
+          body: JSON.stringify({
+            seller: props.seller,
+            listingType: detect.listingType,
+            title,
+            price: priceValue ?? price?.recommended ?? 0,
+            images: [...studio.square, studio.original],
+            data: {
+              detect,
+              answers: props.answers,
+              availability: props.availability,
+              language: props.language,
+              packs,
+              price: price ? { ...price, recommended: priceValue ?? price.recommended } : null,
+              seller: props.seller,
+            },
+          }),
+        }),
+      )
       .then(async (r) => {
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || "Couldn't publish");

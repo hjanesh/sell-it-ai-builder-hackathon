@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import AccountLink from "./AccountLink";
 
 /** Pill nav from the landing page (docs/DESIGN.md + landing.html): logo tile, wordmark, one action. */
 export default function AppHeader({ action }: { action?: ReactNode }) {
@@ -10,11 +11,7 @@ export default function AppHeader({ action }: { action?: ReactNode }) {
           <span className="grid h-7 w-7 place-items-center rounded-md bg-brand text-[13px] font-medium tracking-tight text-surface">S</span>
           Sell It
         </Link>
-        {action ?? (
-          <Link href="/stats" className="rounded-[10px] px-3 py-2 text-sm font-medium text-muted">
-            Live stats
-          </Link>
-        )}
+        {action ?? <AccountLink />}
       </div>
     </header>
   );

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { customAlphabet, nanoid } from "nanoid";
-import { insertListing, uploadImages } from "@/lib/store";
+import { insertListing, uploadImages, userFromRequest } from "@/lib/store";
 import { errorResponse } from "@/lib/claude";
 
 const slugId = customAlphabet("23456789abcdefghjkmnpqrstuvwxyz", 7);
@@ -17,6 +17,7 @@ const CreateListing = z.object({
 export async function POST(req: Request) {
   try {
     const body = CreateListing.parse(await req.json());
+    const user = await userFromRequest(req);
     const slug = `${body.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40)}-${slugId()}`;
     const images = await uploadImages(slug, body.images);
     await insertListing({
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
       title: body.title,
       price: Math.round(body.price),
       images,
-      data: body.data,
+      data: user ? { ...body.data, user_id: user.id, user_email: user.email } : body.data,
     });
     return Response.json({ slug, images });
   } catch (error) {

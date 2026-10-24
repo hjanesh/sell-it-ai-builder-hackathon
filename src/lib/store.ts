@@ -140,3 +140,33 @@ export async function getStatsData(): Promise<LocalData> {
   const data = await readLocal();
   return { ...data, listings: [...data.listings].reverse(), feedback: [...data.feedback].reverse() };
 }
+
+// ---------- sellers (Google sign-in via Supabase Auth) ----------
+export type SellerUser = { id: string; email: string | null; name: string | null };
+
+/** The signed-in seller from an `Authorization: Bearer <access token>` header, or null. */
+export async function userFromRequest(req: Request): Promise<SellerUser | null> {
+  const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  const client = db();
+  if (!token || !client) return null;
+  const { data, error } = await client.auth.getUser(token);
+  if (error || !data.user) return null;
+  const meta = data.user.user_metadata ?? {};
+  return { id: data.user.id, email: data.user.email ?? null, name: (meta.full_name as string) ?? (meta.name as string) ?? null };
+}
+
+/** A seller's listings, newest first. The owner is stored in data.user_id (no schema migration needed). */
+export async function listingsForUser(userId: string): Promise<Listing[]> {
+  const client = db();
+  if (client) {
+    const { data, error } = await client
+      .from("listings")
+      .select("*")
+      .eq("data->>user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw error;
+    return data as Listing[];
+  }
+  return (await readLocal()).listings.filter((l) => l.data.user_id === userId).reverse();
+}
