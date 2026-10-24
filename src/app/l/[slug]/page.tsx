@@ -34,6 +34,20 @@ export default async function ListingPage({ params }: PageProps<"/l/[slug]">) {
   const { slug } = await params;
   const listing: Listing | null = await getListing(slug);
   if (!listing) notFound();
+  const review = (listing.data as { review?: { status: string } }).review;
+  if (review?.status === "pending" || review?.status === "rejected") {
+    return (
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-3 px-4 py-16 text-center">
+        <p className="caption-up text-muted">Sell It</p>
+        <h1 className="display-sm balance">{review.status === "pending" ? "This listing is being reviewed." : "This listing isn't available."}</h1>
+        <p className="body-md text-body">
+          {review.status === "pending"
+            ? "Our team checks some listings before they go live. Please check back in a few minutes."
+            : "It didn't pass our listing review."}
+        </p>
+      </main>
+    );
+  }
   const data = listing.data as ListingData;
   const page = data.packs.listingPage;
   const fill = (t: string) => fillPrice(t, listing.price);

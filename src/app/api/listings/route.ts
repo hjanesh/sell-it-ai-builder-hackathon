@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { customAlphabet, nanoid } from "nanoid";
-import { insertListing, uploadImages, userFromRequest } from "@/lib/store";
+import { getListing, insertListing, updateListingData, uploadImages, userFromRequest } from "@/lib/store";
+import { reviewListing } from "@/lib/review";
 import { errorResponse } from "@/lib/claude";
 
 const slugId = customAlphabet("23456789abcdefghjkmnpqrstuvwxyz", 7);
@@ -13,6 +14,8 @@ const CreateListing = z.object({
   images: z.array(z.string().startsWith("data:image/jpeg;base64,")).min(1).max(7),
   data: z.record(z.string(), z.unknown()),
 });
+
+export const maxDuration = 120;
 
 export async function POST(req: Request) {
   try {
@@ -32,7 +35,10 @@ export async function POST(req: Request) {
       images,
       data: user ? { ...body.data, user_id: user.id, user_email: user.email } : body.data,
     });
-    return Response.json({ slug, images });
+    // The Listing Reviewer agent (AgenticOrg) checks it before it's public; flags wait for a human at /review.
+    const review = await reviewListing((await getListing(slug))!);
+    await updateListingData(slug, { review });
+    return Response.json({ slug, images, review: review.status });
   } catch (error) {
     return errorResponse(error);
   }

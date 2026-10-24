@@ -26,3 +26,7 @@ services:
         sync: false
       - key: NEXT_PUBLIC_UPI_VPA
         sync: false
+      - key: PINELABS_AGENTIC_ORG_KEY
+        sync: false
+      - key: REVIEW_KEY
+        sync: false

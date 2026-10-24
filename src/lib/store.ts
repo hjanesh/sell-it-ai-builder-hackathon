@@ -208,3 +208,35 @@ export async function recentAgentRuns(limit = 50): Promise<AgentRun[]> {
   const local = (await readLocal()) as LocalData & { agent_runs?: AgentRun[] };
   return (local.agent_runs ?? []).slice(-limit).reverse();
 }
+
+/** Shallow-merges fields into a listing's data (used for the review status). */
+export async function updateListingData(slug: string, patch: Record<string, unknown>) {
+  const listing = await getListing(slug);
+  if (!listing) throw new Error("Listing not found");
+  const data = { ...listing.data, ...patch };
+  const sb = db();
+  if (sb) {
+    const { error } = await sb.from("listings").update({ data }).eq("slug", slug);
+    if (error) throw error;
+    return;
+  }
+  const local = await readLocal();
+  local.listings = local.listings.map((l) => (l.slug === slug ? { ...l, data } : l));
+  await writeLocal(local);
+}
+
+/** Listings waiting for a human decision, newest first. */
+export async function listingsAwaitingReview(): Promise<Listing[]> {
+  const sb = db();
+  if (sb) {
+    const { data, error } = await sb
+      .from("listings")
+      .select("*")
+      .eq("data->review->>status", "pending")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    return data as Listing[];
+  }
+  return (await readLocal()).listings.filter((l) => (l.data.review as { status?: string } | undefined)?.status === "pending").reverse();
+}

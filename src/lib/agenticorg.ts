@@ -13,20 +13,22 @@ export const agenticOrgEnabled = () => Boolean(process.env.PINELABS_AGENTIC_ORG_
 
 /** Runs one AgenticOrg agent and logs the run. Never throws: failures come back as status "error". */
 export async function runAgent(
-  agent: { name: string; id: string | undefined },
+  agent: { name: string; id?: string; type?: string },
   inputs: Record<string, unknown>,
   listingSlug: string | null = null,
 ): Promise<AgentResult> {
   const key = process.env.PINELABS_AGENTIC_ORG_KEY;
   let result: AgentResult;
-  if (!key || !agent.id) {
+  if (!key || (!agent.id && !agent.type)) {
     result = { status: "error", confidence: null, output: "AgenticOrg key or agent id not configured", raw: null };
   } else {
     try {
-      const res = await fetch(`${BASE}/api/v1/agents/${agent.id}/run`, {
+      // A custom agent runs by UUID; a pre-built AgenticOrg agent runs by type through the A2A endpoint.
+      const url = agent.id ? `${BASE}/api/v1/agents/${agent.id}/run` : `${BASE}/api/v1/a2a/tasks`;
+      const res = await fetch(url, {
         method: "POST",
         headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-        body: JSON.stringify({ action: "process", inputs, context: {} }),
+        body: JSON.stringify({ ...(agent.id ? {} : { agent_type: agent.type }), action: "process", inputs, context: {} }),
         signal: AbortSignal.timeout(110_000),
       });
       const json = await res.json().catch(() => ({}));
@@ -37,7 +39,7 @@ export async function runAgent(
       result = { status: "error", confidence: null, output: (e as Error).message, raw: null };
     }
   }
-  await logAgentRun({ agent: agent.name, agent_id: agent.id ?? null, listing_slug: listingSlug, inputs, ...result }).catch((e) =>
+  await logAgentRun({ agent: agent.name, agent_id: agent.id ?? agent.type ?? null, listing_slug: listingSlug, inputs, ...result }).catch((e) =>
     console.error("agent log failed", e),
   );
   return result;

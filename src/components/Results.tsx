@@ -73,6 +73,7 @@ export default function Results(props: Props) {
   const bestTab = packs?.place.find((p) => p.channel !== "listing_page")?.channel as (typeof TABS)[number] | undefined;
   const tab = tabChoice ?? bestTab ?? "whatsapp";
   const [slug, setSlug] = useState<string | null>(null);
+  const [reviewStatus, setReviewStatus] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const feedbackAsked = useRef(false);
   const publishing = useRef<Promise<string> | null>(null);
@@ -131,6 +132,7 @@ export default function Results(props: Props) {
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || "Couldn't publish");
         setSlug(j.slug);
+        setReviewStatus(j.review ?? null);
         return j.slug as string;
       })
       .catch((e) => {
@@ -398,6 +400,9 @@ export default function Results(props: Props) {
           <Card>
             <h2 className="text-lg font-semibold">Your Sell It listing page</h2>
             <p className="text-sm text-muted">One link with all photos and details, and a WhatsApp button for buyers.</p>
+            {reviewStatus === "pending" && (
+              <p className="mt-2 rounded-xl bg-accent/30 p-2 text-sm">⏳ Our team is checking this listing. The link goes live as soon as it&apos;s approved.</p>
+            )}
             {listingUrl ? (
               <div className="mt-3 flex items-center gap-2">
                 <a href={listingUrl} target="_blank" rel="noreferrer" className="line-clamp-1 flex-1 text-brand underline">
