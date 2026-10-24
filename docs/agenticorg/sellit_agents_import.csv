@@ -1,0 +1,4 @@
+name,agent_type,domain,designation,specialization,reporting_to_name,org_level,llm_model,confidence_floor
+Sellit Appraiser,support_triage,ops,Product Appraiser,"Identifies what a home seller is selling (category, product, brand/model, condition) from their description and photo notes; asks for more detail when unsure",Hemanth Janesh,2,gemini-2.5-flash,0.7
+Sellit Stylist,content_factory,marketing,Channel Copywriter,"Writes honest, channel-ready listing copy for WhatsApp Status, WhatsApp groups, Instagram and Facebook Marketplace in English and Hindi",Hemanth Janesh,2,gemini-2.5-flash,0.8
+Sellit Listing Reviewer,support_triage,ops,Listing Review Specialist,"Reviews every listing before it goes public: banned or unsafe items, claims that contradict the seller, prices far outside comparables; flags need human approval",Hemanth Janesh,2,gemini-2.5-flash,0.9
