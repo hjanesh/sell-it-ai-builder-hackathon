@@ -5,6 +5,7 @@ import type { Channel, DetectResult, Language, PacksResult, PriceResult } from "
 import { compose, dataUrlToFile, type Box } from "@/lib/images";
 import { downloadZip, fillPrice, formatINR, shareFiles, track } from "@/lib/share";
 import { authHeader } from "@/lib/auth";
+import { fetchRetry } from "@/lib/net";
 import { costFloor, priceCards, type Cost } from "@/lib/pricing";
 import { Button, Card, Chip, CopyButton, Spinner, copyText } from "./ui";
 import type { Seller } from "./Flow";
@@ -107,7 +108,7 @@ export default function Results(props: Props) {
     if (!studio || !packs) return Promise.reject(new Error("Still preparing your listing…"));
     publishing.current ??= authHeader()
       .then((auth) =>
-        fetch("/api/listings", {
+        fetchRetry("/api/listings", {
           method: "POST",
           headers: { "content-type": "application/json", ...auth },
           body: JSON.stringify({

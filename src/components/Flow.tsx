@@ -5,6 +5,7 @@ import type { DetectResult, Language, ListingType, PacksResult, PriceResult } fr
 import { compose, enhance, fileToBitmap, toDataUrl, dataUrlToBitmap } from "@/lib/images";
 import { Button, Card, Chip, Spinner } from "./ui";
 import { authEnabled, displayName, signInWithGoogle, useSession } from "@/lib/auth";
+import { fetchRetry } from "@/lib/net";
 import Results, { type Studio } from "./Results";
 import VoiceNote from "./VoiceNote";
 
@@ -17,7 +18,7 @@ const LANG_LABEL: Record<Language, string> = { en: "English", hinglish: "Hinglis
 const AVAIL_LABEL: Record<Availability, string> = { one_off: "One-off", weekly_batches: "Weekly batches", by_request: "By request" };
 
 async function postJSON<T>(url: string, body: unknown): Promise<T> {
-  const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const res = await fetchRetry(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(json.error || `Request failed (${res.status})`);
   return json as T;
