@@ -38,3 +38,18 @@ alter table events enable row level security;
 -- Public bucket for listing photos (the listing page shows them to anyone with the link).
 insert into storage.buckets (id, name, public) values ('listing-images', 'listing-images', true)
 on conflict (id) do nothing;
+
+-- AgenticOrg agent runs: timestamped agent activity log (proof of life).
+create table if not exists agent_runs (
+  id text primary key,
+  created_at timestamptz not null default now(),
+  agent text not null,
+  agent_id text,
+  listing_slug text,
+  status text not null,
+  confidence double precision,
+  inputs jsonb,
+  output jsonb,
+  raw jsonb
+);
+alter table agent_runs enable row level security;

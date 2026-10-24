@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getStatsData, usingSupabase } from "@/lib/store";
+import { getStatsData, recentAgentRuns, usingSupabase } from "@/lib/store";
 import { formatINR } from "@/lib/format";
 import { AutoRefresh } from "@/components/Track";
 
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 const TYPE_LABEL: Record<string, string> = { pre_owned: "Pre-owned", new: "New", homemade: "Homemade" };
 
 export default async function Stats() {
-  const { listings, feedback, events } = await getStatsData();
+  const [{ listings, feedback, events }, agentRuns] = await Promise.all([getStatsData(), recentAgentRuns(30)]);
   const users = new Set(listings.map((l) => l.seller_whatsapp)).size;
   const value = listings.reduce((s, l) => s + (l.price || 0), 0);
   const rated = feedback.filter((f) => f.thumbs);
@@ -67,13 +67,38 @@ export default async function Stats() {
         </ul>
       )}
 
+      <h2 className="mt-8 text-xl font-semibold">Agent activity (AgenticOrg)</h2>
+      {agentRuns.length === 0 ? (
+        <p className="mt-2 text-muted">No agent runs yet.</p>
+      ) : (
+        <ul className="mt-3 flex flex-col divide-y divide-line text-sm">
+          {agentRuns.map((r) => (
+            <li key={r.id} className="flex justify-between gap-3 py-2">
+              <span className="line-clamp-1">
+                <span className="font-semibold">{r.agent}</span>
+                {r.listing_slug ? ` · ${r.listing_slug}` : ""}
+              </span>
+              <span className="shrink-0 tabular-nums text-muted">
+                {r.status === "hitl_triggered" ? "⏸ needs approval" : r.status} ·{" "}
+                {new Date(r.created_at).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <h2 className="mt-8 text-xl font-semibold">Latest listings</h2>
       <ul className="mt-3 flex flex-col divide-y divide-line">
         {listings.slice(0, 15).map((l) => (
           <li key={l.id}>
             <Link href={`/l/${l.slug}`} className="flex justify-between gap-3 py-2">
               <span className="line-clamp-1">{l.title}</span>
-              <span className="shrink-0 font-semibold">₹{formatINR(l.price)}</span>
+              <span className="shrink-0 font-semibold">
+                ₹{formatINR(l.price)}{" "}
+                <span className="font-normal text-muted tabular-nums">
+                  · {new Date(l.created_at).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" })}
+                </span>
+              </span>
             </Link>
           </li>
         ))}

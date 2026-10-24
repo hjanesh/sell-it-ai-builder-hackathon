@@ -1,0 +1,1211 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sellit Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap">
+<style>
+  /* Clay-inspired tokens applied to Sellit mockup gallery */
+  :root {
+    --canvas: #fffaf0;
+    --surface-soft: #faf5e8;
+    --surface-card: #f5f0e0;
+    --surface-strong: #ebe6d6;
+    --ink: #0a0a0a;
+    --body: #3a3a3a;
+    --muted: #6a6a6a;
+    --muted-soft: #9a9a9a;
+    --hairline: #e5e5e5;
+    --hairline-soft: #f0f0f0;
+    --primary: #0a0a0a;
+    --on-primary: #ffffff;
+    --brand-pink: #ff4d8b;
+    --brand-teal: #1a3a3a;
+    --brand-lavender: #b8a4ed;
+    --brand-peach: #ffb084;
+    --brand-ochre: #e8b94a;
+    --brand-mint: #a4d4c5;
+    --brand-coral: #ff6b5a;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --error: #ef4444;
+
+    --font-display: 'Inter', -apple-system, sans-serif;
+    --font-body: 'Inter', 'Noto Sans Devanagari', -apple-system, sans-serif;
+    --rounded-md: 12px;
+    --rounded-lg: 16px;
+    --rounded-xl: 24px;
+    --rounded-pill: 9999px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --canvas: #fffaf0;
+    }
+  }
+
+  body {
+    background: var(--surface-strong);
+    font-family: var(--font-body);
+    color: var(--ink);
+    margin: 0;
+  }
+  .page {
+    padding: 48px 24px 96px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .page-header {
+    margin-bottom: 48px;
+  }
+  .page-header .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .page-header h1 {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  .page-header p {
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--body);
+    max-width: 640px;
+    margin: 0;
+  }
+
+  .journey-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+  }
+  @media (min-width: 900px) {
+    .journey-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 1300px) {
+    .journey-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .step-caption {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .step-caption .num {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    min-width: 40px;
+  }
+  .step-caption .meta h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    letter-spacing: -0.2px;
+  }
+  .step-caption .meta p {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 100%;
+    aspect-ratio: 9 / 19;
+    background: var(--canvas);
+    border-radius: 32px;
+    border: 1px solid var(--hairline);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 20px 40px -16px rgba(0,0,0,0.08);
+  }
+  .notch {
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  .notch::after {
+    content: '';
+    width: 60px; height: 4px;
+    background: var(--ink);
+    border-radius: 2px;
+    opacity: 0.08;
+  }
+  .screen {
+    flex: 1;
+    padding: 16px 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .screen.scroll { overflow-y: auto; }
+
+  /* Small atoms */
+  .logo {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.8px;
+    color: var(--ink);
+  }
+  .logo .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--brand-coral);
+    border-radius: 50%;
+    margin-right: 2px;
+    transform: translateY(-6px);
+  }
+
+  .headline {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -1px;
+    line-height: 1.05;
+    color: var(--ink);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 20px;
+    height: 44px;
+    border-radius: var(--rounded-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: var(--font-body);
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: var(--on-primary);
+    width: 100%;
+  }
+  .btn-secondary {
+    background: var(--canvas);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+    width: 100%;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: var(--surface-card);
+    border-radius: var(--rounded-pill);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .pill-mint { background: var(--brand-mint); }
+  .pill-ochre { background: var(--brand-ochre); }
+  .pill-warning { background: #fff4d6; color: #8a6400; }
+
+  .hair { height: 1px; background: var(--hairline); margin: 12px 0; }
+
+  .input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--hairline);
+    background: var(--canvas);
+    font-size: 14px;
+    font-family: var(--font-body);
+    color: var(--ink);
+    box-sizing: border-box;
+  }
+
+  /* ===== Screen-specific illustrations ===== */
+
+  /* Screen 1: Home - cream canvas, hero + claymation blob */
+  .s1 .hero-blob {
+    position: relative;
+    aspect-ratio: 1;
+    width: 70%;
+    margin: 20px auto;
+    border-radius: var(--rounded-xl);
+    background: linear-gradient(135deg, var(--brand-peach) 30%, var(--brand-pink) 100%);
+    overflow: hidden;
+  }
+  .s1 .hero-blob .ball {
+    position: absolute;
+    width: 50%; height: 50%;
+    background: var(--brand-lavender);
+    border-radius: 50%;
+    top: 15%; right: -10%;
+  }
+  .s1 .hero-blob .cube {
+    position: absolute;
+    width: 40%; height: 40%;
+    background: var(--brand-ochre);
+    border-radius: 12px;
+    bottom: 10%; left: 8%;
+    transform: rotate(-12deg);
+  }
+  .s1 .hero-blob .dot {
+    position: absolute;
+    width: 18%; height: 18%;
+    background: var(--brand-mint);
+    border-radius: 50%;
+    bottom: 25%; right: 15%;
+  }
+
+  /* Screen 2: Upload */
+  .s2 .upload-zone {
+    flex: 1;
+    border: 2px dashed var(--hairline);
+    border-radius: var(--rounded-xl);
+    background: var(--surface-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .camera-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-size: 24px;
+  }
+
+  /* Screen 3: Identify */
+  .s3 .product-preview {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #e8e4d6, #d4cfbf);
+    border-radius: var(--rounded-lg);
+    position: relative;
+    margin: 12px 0;
+    overflow: hidden;
+  }
+  .s3 .product-preview::after {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    background: linear-gradient(145deg, #4a4a4a 0%, #2a2a2a 100%);
+    border-radius: 8px;
+  }
+  .s3 .product-preview::before {
+    content: '';
+    position: absolute;
+    inset: 25% 25% 60% 25%;
+    background: #6a7a8a;
+    border-radius: 4px;
+    z-index: 1;
+  }
+  .s3 .guess-card {
+    background: var(--surface-soft);
+    border-radius: var(--rounded-lg);
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .s3 .guess-label {
+    font-size: 11px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .s3 .guess-value {
+    font-size: 15px; font-weight: 600;
+  }
+  .s3 .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  /* Screen 4: Price */
+  .s4 .price-card {
+    border-radius: var(--rounded-lg);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--hairline);
+    background: var(--canvas);
+  }
+  .s4 .price-card.pick {
+    background: var(--brand-teal);
+    color: white;
+    border-color: var(--brand-teal);
+  }
+  .s4 .price-emoji { font-size: 20px; margin-right: 8px; }
+  .s4 .price-text { flex: 1; }
+  .s4 .price-text .label { font-size: 11px; font-weight: 600; }
+  .s4 .price-text .sub { font-size: 10px; opacity: 0.7; }
+  .s4 .price-val { font-size: 20px; font-weight: 600; font-family: var(--font-display); letter-spacing: -0.5px; }
+  .s4 .social {
+    background: var(--surface-card);
+    border-radius: var(--rounded-lg);
+    padding: 10px 12px;
+    margin: 12px 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .s4 .social b { font-weight: 600; }
+
+  /* Screen 5: Login */
+  .s5 .login-ill {
+    aspect-ratio: 1.4;
+    background: var(--brand-lavender);
+    border-radius: var(--rounded-xl);
+    margin: 10px 0 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .s5 .login-ill::before {
+    content: '🔑';
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+  }
+
+  /* Screen 6: Paywall - UPI QR */
+  .s6 .qr-card {
+    background: var(--canvas);
+    border: 1px solid var(--hairline);
+    border-radius: var(--rounded-lg);
+    padding: 16px;
+    margin: 10px 0;
+  }
+  .s6 .qr-grid {
+    width: 140px;
+    height: 140px;
+    margin: 8px auto 12px;
+    background: var(--ink);
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 2px;
+    padding: 6px;
+    box-sizing: border-box;
+  }
+  .s6 .qr-grid span { background: var(--canvas); border-radius: 1px; }
+  .s6 .qr-grid span.off { background: var(--ink); }
+  .s6 .qr-amount {
+    text-align: center;
+    font-size: 28px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+  }
+
+  /* Screen 7: Channel picker */
+  .s7 .channel-card {
+    border-radius: var(--rounded-lg);
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .s7 .channel-card.wa-status { background: var(--brand-mint); }
+  .s7 .channel-card.wa-post { background: var(--brand-peach); }
+  .s7 .channel-card.reel { background: var(--brand-pink); color: white; }
+  .s7 .channel-card.fb { background: var(--brand-lavender); }
+  .s7 .channel-emoji { font-size: 24px; }
+  .s7 .channel-name { font-size: 13px; font-weight: 600; }
+  .s7 .channel-sub { font-size: 10px; opacity: 0.75; margin-top: 2px; }
+  .s7 .lock {
+    margin-left: auto;
+    font-size: 14px;
+  }
+
+  /* Screen 8: Share preview */
+  .s8 .wa-preview {
+    aspect-ratio: 9/16;
+    background: linear-gradient(180deg, #ffe8d6 0%, #ffb084 100%);
+    border-radius: var(--rounded-lg);
+    position: relative;
+    margin: 10px 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 14px;
+    box-sizing: border-box;
+  }
+  .s8 .wa-preview::before {
+    content: '';
+    position: absolute;
+    width: 65%; height: 55%;
+    background: var(--canvas);
+    border-radius: var(--rounded-lg);
+    top: 15%; left: 17.5%;
+    box-shadow: 0 10px 24px -8px rgba(0,0,0,0.15);
+  }
+  .s8 .wa-preview::after {
+    content: '🥣';
+    position: absolute;
+    font-size: 50px;
+    top: 25%; left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+  .s8 .price-overlay {
+    position: relative;
+    z-index: 2;
+    color: var(--ink);
+    font-family: var(--font-display);
+    letter-spacing: -0.5px;
+  }
+  .s8 .price-overlay .big { font-size: 22px; font-weight: 500; }
+  .s8 .price-overlay .small { font-size: 11px; font-weight: 500; opacity: 0.85; }
+
+  /* Screen 9: Public listing (buyer view) */
+  .s9 .listing-hero {
+    aspect-ratio: 1.1;
+    background: linear-gradient(135deg, var(--brand-ochre) 0%, var(--brand-peach) 100%);
+    border-radius: var(--rounded-lg);
+    margin: 0 -4px 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .s9 .listing-hero::after {
+    content: '🥣';
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 72px;
+  }
+  .s9 .listing-title {
+    font-size: 18px; font-weight: 600; letter-spacing: -0.3px;
+  }
+  .s9 .listing-price {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.8px;
+    margin: 2px 0 6px;
+  }
+  .s9 .available {
+    display: inline-flex;
+    font-size: 10px;
+    padding: 3px 8px;
+    background: var(--brand-mint);
+    border-radius: var(--rounded-pill);
+    font-weight: 600;
+  }
+  .s9 .meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 10px 0 12px;
+    line-height: 1.5;
+  }
+
+  /* Screen 10: Dashboard */
+  .s10 .listing-tile {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border-radius: var(--rounded-lg);
+    background: var(--canvas);
+    border: 1px solid var(--hairline);
+    margin-bottom: 10px;
+  }
+  .s10 .thumb {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--brand-ochre), var(--brand-peach));
+    border-radius: var(--rounded-md);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .s10 .listing-body { flex: 1; min-width: 0; }
+  .s10 .listing-name { font-size: 13px; font-weight: 600; }
+  .s10 .listing-stats { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .s10 .demand-tip {
+    background: var(--brand-ochre);
+    border-radius: var(--rounded-lg);
+    padding: 12px 14px;
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .s10 .demand-tip .label {
+    font-size: 10px; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .s10 .demand-tip b { font-weight: 600; }
+  .s10 .buyer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px solid var(--hairline-soft);
+  }
+  .s10 .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--brand-lavender);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .s10 .avatar.b { background: var(--brand-mint); }
+  .s10 .avatar.c { background: var(--brand-peach); }
+  .s10 .buyer-name { font-size: 12px; font-weight: 500; }
+  .s10 .buyer-note { font-size: 10px; color: var(--muted); }
+
+  /* Screen 11: Retargeting */
+  .s11 .retarget-card {
+    background: var(--brand-teal);
+    color: white;
+    border-radius: var(--rounded-xl);
+    padding: 16px;
+    margin: 10px 0;
+  }
+  .s11 .retarget-card .count {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -1px;
+  }
+  .s11 .wa-mock {
+    background: #e8f5e8;
+    border-radius: var(--rounded-md);
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 11px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .s11 .wa-mock .from { font-weight: 600; margin-bottom: 2px; color: #075e54; }
+
+  /* Screen 12: Manual buyer upload */
+  .s12 .drop-zone {
+    border: 2px dashed var(--brand-coral);
+    border-radius: var(--rounded-xl);
+    background: #fff2ee;
+    padding: 20px;
+    text-align: center;
+    margin: 10px 0;
+  }
+  .s12 .drop-zone .big-emoji { font-size: 36px; }
+  .s12 .screenshot-mock {
+    background: #e8f5e8;
+    border-radius: var(--rounded-md);
+    padding: 10px;
+    font-size: 11px;
+    margin-top: 10px;
+    text-align: left;
+  }
+  .s12 .parsed-list {
+    margin-top: 12px;
+  }
+  .s12 .parsed-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: var(--canvas);
+    border: 1px solid var(--hairline);
+    border-radius: var(--rounded-md);
+    margin-bottom: 6px;
+    font-size: 11px;
+  }
+  .s12 .parsed-row .check {
+    width: 16px; height: 16px;
+    background: var(--success);
+    border-radius: 4px;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .legend {
+    margin-top: 48px;
+    padding: 32px;
+    background: var(--canvas);
+    border-radius: var(--rounded-xl);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  @media (min-width: 700px) {
+    .legend { grid-template-columns: repeat(2, 1fr); }
+  }
+  .legend h2 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.6px;
+    margin: 0 0 8px;
+  }
+  .legend p {
+    font-size: 14px;
+    color: var(--body);
+    line-height: 1.55;
+    margin: 0;
+  }
+</style>
+
+<div class="page">
+  <header class="page-header">
+    <div class="eyebrow">Sellit · User Journey · v2.1</div>
+    <h1>From one photo to a sold-out home business.</h1>
+    <p>Twelve screens, left to right. Login moved after upload so the first value shows before any friction. Public listing captures interest. Seller can also upload screenshots of DM buyers. When demand spikes, the app nudges price up.</p>
+  </header>
+
+  <div class="journey-grid">
+
+    <!-- 1 - Welcome -->
+    <div class="step">
+      <div class="phone s1">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="logo"><span class="dot"></span>sellit</div>
+          <div style="margin-top: 36px;">
+            <div class="headline" style="font-size: 36px;">Your home's marketing team.</div>
+            <p style="font-size: 13px; color: var(--muted); margin: 12px 0 0; line-height: 1.5;">First listing live in 60 seconds. For the stuff in your cupboard and the batch in your kitchen.</p>
+          </div>
+          <div class="hero-blob">
+            <div class="ball"></div>
+            <div class="cube"></div>
+            <div class="dot"></div>
+          </div>
+          <button class="btn btn-primary">Snap what you're selling →</button>
+          <div style="text-align: center; margin-top: 10px;">
+            <span style="font-size: 11px; color: var(--muted);">Already a seller? <b style="color: var(--ink);">Sign in</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">01</div>
+        <div class="meta">
+          <h3>Welcome</h3>
+          <p>Zero signup. Zero form. Just the button that gets us moving.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 - Upload -->
+    <div class="step">
+      <div class="phone s2">
+        <div class="notch"></div>
+        <div class="screen">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="btn-ghost" style="padding: 0; font-size: 20px;">←</div>
+            <div class="logo"><span class="dot"></span>sellit</div>
+          </div>
+          <div class="headline" style="font-size: 24px; margin-top: 20px;">What are you selling?</div>
+          <div class="upload-zone">
+            <div class="camera-icon">📷</div>
+            <div style="font-size: 13px; font-weight: 600;">Snap or upload</div>
+            <div style="font-size: 11px; color: var(--muted); max-width: 180px; text-align: center;">One clear photo is enough. We'll ask for more if we need to.</div>
+          </div>
+          <input class="input" placeholder="Tell us about it (optional)" style="margin-bottom: 10px;">
+          <button class="btn btn-primary">Continue</button>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">02</div>
+        <div class="meta">
+          <h3>Snap</h3>
+          <p>One photo. Optional one-line description. No login yet — show value first.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 - Identify -->
+    <div class="step">
+      <div class="phone s3">
+        <div class="notch"></div>
+        <div class="screen">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="btn-ghost" style="padding: 0; font-size: 20px;">←</div>
+            <div class="logo"><span class="dot"></span>sellit</div>
+          </div>
+          <div class="headline" style="font-size: 22px; margin-top: 16px;">Is this right?</div>
+          <div class="product-preview"></div>
+          <div class="guess-card">
+            <div class="guess-label">We think it's a</div>
+            <div class="guess-value">HP Pavilion 15</div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">2021 · Intel Core i5 · 8GB RAM</div>
+          </div>
+          <div style="font-size: 11px; color: var(--muted); margin-bottom: 10px;">We may ask for a second photo of the About screen for accuracy.</div>
+          <div class="btn-row">
+            <button class="btn btn-secondary" style="width: 100%; font-size: 13px;">Not quite</button>
+            <button class="btn btn-primary" style="font-size: 13px;">Yes, that's it</button>
+          </div>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">03</div>
+        <div class="meta">
+          <h3>Identify</h3>
+          <p>AI guesses, user confirms. If specs are needed, it asks for the About screen.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 - Price -->
+    <div class="step">
+      <div class="phone s4">
+        <div class="notch"></div>
+        <div class="screen scroll">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="btn-ghost" style="padding: 0; font-size: 20px;">←</div>
+            <div class="logo"><span class="dot"></span>sellit</div>
+          </div>
+          <div class="headline" style="font-size: 22px; margin-top: 16px;">Pick your price.</div>
+          <div style="font-size: 12px; color: var(--muted); margin: 4px 0 12px;">Cost basis ₹420 · Materials ₹120 + Time 2h</div>
+
+          <div class="price-card">
+            <div class="price-emoji">💨</div>
+            <div class="price-text">
+              <div class="label">Sell Fast</div>
+              <div class="sub">33% margin · 2 days</div>
+            </div>
+            <div class="price-val">₹449</div>
+          </div>
+
+          <div class="price-card pick">
+            <div class="price-emoji">⭐</div>
+            <div class="price-text">
+              <div class="label">Optimal · recommended</div>
+              <div class="sub" style="opacity: 0.8;">65% margin · balanced</div>
+            </div>
+            <div class="price-val">₹649</div>
+          </div>
+
+          <div class="price-card">
+            <div class="price-emoji">💎</div>
+            <div class="price-text">
+              <div class="label">Signature</div>
+              <div class="sub">115% margin · limited batches</div>
+            </div>
+            <div class="price-val">₹899</div>
+          </div>
+
+          <div class="social">
+            <b>73%</b> of crochet listings on Sellit this month priced between ₹500–₹850.
+          </div>
+
+          <button class="btn btn-primary">Continue</button>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">04</div>
+        <div class="meta">
+          <h3>Price</h3>
+          <p>Algorithm, not guess. Three strategies + social proof. Still no login.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 - Login (moved AFTER value) -->
+    <div class="step">
+      <div class="phone s5">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="logo"><span class="dot"></span>sellit</div>
+          <div class="login-ill"></div>
+          <div class="headline" style="font-size: 22px;">One tap to save your work.</div>
+          <p style="font-size: 13px; color: var(--muted); margin: 8px 0 20px;">We'll text you a 4-digit code. No password, no email.</p>
+          <input class="input" placeholder="Phone number" value="+91 ·  ·  ·  ·  ·  ·  ·  ·  ·  ·" style="margin-bottom: 10px;">
+          <button class="btn btn-primary">Send OTP</button>
+          <div style="text-align: center; font-size: 11px; color: var(--muted); margin-top: 12px;">You'll see your kit next.</div>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">05</div>
+        <div class="meta">
+          <h3>Save your work</h3>
+          <p>Login lives here, after value is visible. Phone OTP only — zero friction.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 - Paywall UPI -->
+    <div class="step">
+      <div class="phone s6">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="logo"><span class="dot"></span>sellit</div>
+          <div class="headline" style="font-size: 22px; margin-top: 16px;">Unlock your kit.</div>
+          <p style="font-size: 13px; color: var(--muted); margin: 6px 0 12px;">3 studio photos · 4 channel-ready posts · public listing page · buyer list.</p>
+
+          <div class="qr-card">
+            <div class="qr-amount">₹49</div>
+            <div style="text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 10px;">Scan with any UPI app</div>
+            <div class="qr-grid" id="qr"></div>
+            <div style="text-align: center; font-size: 10px; color: var(--muted); margin-top: 8px;">priya@okaxis</div>
+          </div>
+
+          <button class="btn btn-primary">I've paid →</button>
+          <div style="text-align: center; font-size: 11px; color: var(--muted); margin-top: 8px;">Can't afford full? <b style="color: var(--ink);">Pay what you want</b></div>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">06</div>
+        <div class="meta">
+          <h3>Paywall · UPI QR</h3>
+          <p>Our personal UPI QR. Zero gateway KYC. "I paid" is honor-system with manual audit.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 - Channel picker -->
+    <div class="step">
+      <div class="phone s7">
+        <div class="notch"></div>
+        <div class="screen scroll">
+          <div class="logo"><span class="dot"></span>sellit</div>
+          <div class="headline" style="font-size: 22px; margin-top: 16px;">Where will you post?</div>
+          <p style="font-size: 12px; color: var(--muted); margin: 4px 0 14px;">Pick one — we'll build the exact format for that channel.</p>
+
+          <div class="channel-card wa-status">
+            <div class="channel-emoji">📱</div>
+            <div>
+              <div class="channel-name">WhatsApp Status</div>
+              <div class="channel-sub">9:16 image · 2-line caption</div>
+            </div>
+          </div>
+
+          <div class="channel-card wa-post">
+            <div class="channel-emoji">💬</div>
+            <div>
+              <div class="channel-name">WhatsApp Group</div>
+              <div class="channel-sub">Square image · 4-line pitch</div>
+            </div>
+          </div>
+
+          <div class="channel-card reel">
+            <div class="channel-emoji">🎥</div>
+            <div>
+              <div class="channel-name">Instagram Reel</div>
+              <div class="channel-sub" style="opacity: 0.85;">15-sec vertical video + audio</div>
+            </div>
+            <div class="lock">🔒</div>
+          </div>
+
+          <div class="channel-card fb">
+            <div class="channel-emoji">🛒</div>
+            <div>
+              <div class="channel-name">Facebook Marketplace</div>
+              <div class="channel-sub">Prefilled title + category</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">07</div>
+        <div class="meta">
+          <h3>Pick a channel</h3>
+          <p>Each tap builds that specific format. Reel is paywall-gated (extra tier).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 - Share preview -->
+    <div class="step">
+      <div class="phone s8">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="logo"><span class="dot"></span>sellit</div>
+          <div class="headline" style="font-size: 20px; margin-top: 14px;">Your WhatsApp Status</div>
+          <div class="wa-preview">
+            <div class="price-overlay">
+              <div class="big">₹120 / L</div>
+              <div class="small">Fresh dosa batter · Order by Thu night</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: var(--muted); margin-bottom: 10px; line-height: 1.4;">
+            <b style="color: var(--ink);">Caption:</b> Fresh dosa batter 🥣 ₹120/L · Order by Thu night → sellit.app/l/priya-batter
+          </div>
+          <button class="btn btn-primary">Share to WhatsApp →</button>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">08</div>
+        <div class="meta">
+          <h3>Share</h3>
+          <p>Studio shot + overlaid price. Caption prefilled. Deep-link opens WhatsApp.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 - Public listing (buyer view) -->
+    <div class="step">
+      <div class="phone s9">
+        <div class="notch"></div>
+        <div class="screen scroll">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-size: 11px; color: var(--muted);">sellit.app/l/priya-batter</div>
+            <div style="font-size: 18px;">⋯</div>
+          </div>
+          <div class="listing-hero"></div>
+          <div class="listing-title">Priya's homemade dosa batter</div>
+          <div class="listing-price">₹120 <span style="font-size: 13px; color: var(--muted); font-weight: 400;">/ litre</span></div>
+          <span class="available">● Weekly · order by Thu</span>
+          <div class="meta">
+            Fresh overnight-fermented batter from a pure-veg kitchen in Koramangala. Delivery radius 2 km. Minimum 1 L.
+          </div>
+          <button class="btn btn-primary" style="margin-bottom: 8px;">I'm interested →</button>
+          <button class="btn btn-secondary">Share with a friend</button>
+          <div style="margin-top: 12px; font-size: 11px; color: var(--muted); text-align: center;">11 people interested this week · 7 L already booked</div>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">09</div>
+        <div class="meta">
+          <h3>Public listing · buyer view</h3>
+          <p>Clean product page. The "interested" tap captures the buyer's number for Priya.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 - Dashboard with demand tip -->
+    <div class="step">
+      <div class="phone s10">
+        <div class="notch"></div>
+        <div class="screen scroll">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="logo"><span class="dot"></span>sellit</div>
+            <div class="avatar" style="width: 32px; height: 32px;">P</div>
+          </div>
+
+          <div class="headline" style="font-size: 20px; margin-top: 14px;">Your listings</div>
+
+          <div class="listing-tile" style="margin-top: 10px;">
+            <div class="thumb">🥣</div>
+            <div class="listing-body">
+              <div class="listing-name">Dosa batter · 1 L</div>
+              <div class="listing-stats">₹120 · 11 interested · 7 L booked</div>
+            </div>
+          </div>
+
+          <div class="demand-tip">
+            <span class="label">📈 Demand spike</span>
+            <b>11 interested, 10 litres available.</b> Consider raising to <b>₹140/L</b> for the next drop — buyers show urgency.
+          </div>
+
+          <div style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 13px; font-weight: 600;">Interested buyers</div>
+            <button class="btn-ghost" style="font-size: 11px; padding: 0; color: var(--brand-coral);">+ Add from WhatsApp</button>
+          </div>
+
+          <div class="buyer-row">
+            <div class="avatar">S</div>
+            <div style="flex: 1;">
+              <div class="buyer-name">Sunita Rao</div>
+              <div class="buyer-note">2 L · "will pick Fri AM"</div>
+            </div>
+            <div style="font-size: 14px;">💬</div>
+          </div>
+          <div class="buyer-row">
+            <div class="avatar b">A</div>
+            <div style="flex: 1;">
+              <div class="buyer-name">Ankit M.</div>
+              <div class="buyer-note">1 L · "pls save for me"</div>
+            </div>
+            <div style="font-size: 14px;">💬</div>
+          </div>
+          <div class="buyer-row">
+            <div class="avatar c">R</div>
+            <div style="flex: 1;">
+              <div class="buyer-name">Reema (A-204)</div>
+              <div class="buyer-note">1 L · society group</div>
+            </div>
+            <div style="font-size: 14px;">💬</div>
+          </div>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">10</div>
+        <div class="meta">
+          <h3>Seller dashboard</h3>
+          <p>Buyer list + a demand-spike tip that nudges price up. The seller's own CRM.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 - Manual buyer upload -->
+    <div class="step">
+      <div class="phone s12">
+        <div class="notch"></div>
+        <div class="screen scroll">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="btn-ghost" style="padding: 0; font-size: 20px;">←</div>
+            <div class="logo"><span class="dot"></span>sellit</div>
+          </div>
+          <div class="headline" style="font-size: 22px; margin-top: 14px;">Add buyers from WhatsApp</div>
+          <p style="font-size: 12px; color: var(--muted); margin: 6px 0 10px;">Got DMs or society-group replies? Drop a screenshot — we'll pull out names and numbers.</p>
+
+          <div class="drop-zone">
+            <div class="big-emoji">📸</div>
+            <div style="font-size: 13px; font-weight: 600; margin-top: 4px;">Upload screenshot</div>
+            <div style="font-size: 10px; color: var(--muted); max-width: 180px; margin: 4px auto 0;">We scan the chat with AI to find buyers and quantities.</div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 600; margin-top: 14px;">We found 4 buyers</div>
+          <div class="parsed-list">
+            <div class="parsed-row">
+              <div class="check">✓</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600;">Meera Shah</div>
+                <div style="color: var(--muted); font-size: 10px;">2 L · 98xxxx3421</div>
+              </div>
+            </div>
+            <div class="parsed-row">
+              <div class="check">✓</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600;">Rohit (B-402)</div>
+                <div style="color: var(--muted); font-size: 10px;">1 L · 90xxxx7788</div>
+              </div>
+            </div>
+            <div class="parsed-row">
+              <div class="check">✓</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600;">Vidya Aunty</div>
+                <div style="color: var(--muted); font-size: 10px;">1 L · 98xxxx1109</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="margin-top: 12px;">Add 4 to buyer list</button>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">11</div>
+        <div class="meta">
+          <h3>Buyers from screenshots</h3>
+          <p>Interest shows up offline too. One upload parses DMs + society-group replies into the same CRM.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 - Retargeting -->
+    <div class="step">
+      <div class="phone s11">
+        <div class="notch"></div>
+        <div class="screen scroll">
+          <div class="logo"><span class="dot"></span>sellit</div>
+          <div class="headline" style="font-size: 20px; margin-top: 14px;">Fresh batch Friday?</div>
+          <div class="retarget-card">
+            <div style="font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.6;">You can notify</div>
+            <div class="count">11 past buyers</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 6px;">who said they were interested in your dosa batter the last 3 drops.</div>
+          </div>
+
+          <div style="font-size: 11px; font-weight: 600; margin-top: 10px;">PREVIEW</div>
+          <div class="wa-mock">
+            <div class="from">To: Sunita Rao</div>
+            Hi Sunita! Priya here. Fresh batch of dosa batter ready for Friday morning. ₹140/L (new price). Reply YES to order 🥣 → sellit.app/l/priya-batter-oct31
+          </div>
+
+          <button class="btn btn-primary">Send to all 11 →</button>
+          <button class="btn btn-secondary" style="margin-top: 8px;">Edit message</button>
+          <div style="font-size: 10px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.4;">Opens WhatsApp with each contact. You tap send once per buyer — no spam flags.</div>
+        </div>
+      </div>
+      <div class="step-caption">
+        <div class="num">12</div>
+        <div class="meta">
+          <h3>Retargeting</h3>
+          <p>Next batch → one tap, 11 personalized WhatsApps go out. This is the moat.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="legend">
+    <div>
+      <h2>What changed in this flow</h2>
+      <p><b>Login moves to screen 05</b>, after price is visible — the user has already seen value by then. The signup drop-off we feared vanishes.</p>
+    </div>
+    <div>
+      <h2>Interest, both ways</h2>
+      <p>Public listing captures buyers via the "I'm interested" tap. For buyers who messaged offline, the seller uploads a screenshot (screen 11) — AI parses names & numbers into the same CRM.</p>
+    </div>
+    <div>
+      <h2>Dynamic pricing nudge</h2>
+      <p>When interest-count outruns stock, the dashboard surfaces a tip to raise price for the next drop. Priya runs real pricing experiments without thinking about them.</p>
+    </div>
+    <div>
+      <h2>The brand voltage</h2>
+      <p>Cream canvas, dark CTAs, saturated single-color cards for feature moments (price picker, channel picker, demand tip). The warm palette is the main contrast against OLX, Marketplace, and generic listing tools.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Draw a plausible QR-style grid pattern (visual only, non-functional)
+  const qr = document.getElementById('qr');
+  if (qr) {
+    const pattern = [
+      '1111111001111111',
+      '1000001010000001',
+      '1011101011101101',
+      '1011101001101101',
+      '1011101010101101',
+      '1000001011000001',
+      '1111111010111111',
+      '0000000011000000',
+      '1101011010111101',
+      '0001110101010010',
+      '1011001100101111',
+      '0000000011101000',
+      '1111111000110010',
+      '1000001010101101',
+      '1011101011010010',
+      '1011101001001111'
+    ];
+    const size = 10;
+    for (let i = 0; i < size * size; i++) {
+      const row = Math.floor(i / size);
+      const col = i % size;
+      const span = document.createElement('span');
+      // Sample the pattern diagonally for a convincing look
+      const bit = pattern[row % pattern.length][col % pattern[0].length];
+      if (bit === '1') span.classList.add('off');
+      qr.appendChild(span);
+    }
+  }
+</script>
+
+</body></html>

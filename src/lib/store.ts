@@ -170,3 +170,41 @@ export async function listingsForUser(userId: string): Promise<Listing[]> {
   }
   return (await readLocal()).listings.filter((l) => l.data.user_id === userId).reverse();
 }
+
+// ---------- agent runs (AgenticOrg), the timestamped agent activity log ----------
+export type AgentRun = {
+  id: string;
+  created_at: string;
+  agent: string;
+  agent_id: string | null;
+  listing_slug: string | null;
+  status: string;
+  confidence: number | null;
+  inputs: unknown;
+  output: unknown;
+  raw: unknown;
+};
+
+export async function logAgentRun(run: Omit<AgentRun, "id" | "created_at">) {
+  const row: AgentRun = { id: crypto.randomUUID(), created_at: new Date().toISOString(), ...run };
+  const client = db();
+  if (client) {
+    const { error } = await client.from("agent_runs").insert(row);
+    if (error) throw error;
+    return;
+  }
+  const local = (await readLocal()) as LocalData & { agent_runs?: AgentRun[] };
+  local.agent_runs = [...(local.agent_runs ?? []), row];
+  await writeLocal(local);
+}
+
+export async function recentAgentRuns(limit = 50): Promise<AgentRun[]> {
+  const client = db();
+  if (client) {
+    const { data, error } = await client.from("agent_runs").select("*").order("created_at", { ascending: false }).limit(limit);
+    if (error) return [];
+    return data as AgentRun[];
+  }
+  const local = (await readLocal()) as LocalData & { agent_runs?: AgentRun[] };
+  return (local.agent_runs ?? []).slice(-limit).reverse();
+}
