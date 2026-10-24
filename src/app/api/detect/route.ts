@@ -21,7 +21,9 @@ const PROMPT = `Look at the photo(s) and the seller's note. Work out what is bei
    New: sealed/open box, MRP, warranty, quantity/variants, location.
    Homemade: what's in the batch, price per unit/box, minimum order, veg/eggless/allergens/shelf life,
    order-by/ready-by, pickup/delivery area.
-   Prefer chips with 2-5 short options. Set prefilled when the photo or note already answers it.
+   Prefer chips with 2-5 short options. Use kind "multi" when several answers can be true at once (what is included,
+   issues or defects, features); "chips" when only one can. Set prefilled when the photo or note already answers it
+   (for multi, comma-separated).
    Always include a "location" text question (area, city) unless the note already gives it.`;
 
 export async function POST(req: Request) {

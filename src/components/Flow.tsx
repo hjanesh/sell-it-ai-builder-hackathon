@@ -47,6 +47,7 @@ export default function Flow() {
   const [packsError, setPacksError] = useState<string | null>(null);
   const [studio, setStudio] = useState<Studio | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const cameraInput = useRef<HTMLInputElement>(null);
   const session = useSession();
   const [guest, setGuest] = useState(false);
 
@@ -203,13 +204,13 @@ export default function Flow() {
             {detect.questions.map((q) => (
               <div key={q.id}>
                 <label className="font-medium">{q.label}</label>
-                {q.kind === "chips" && q.options.length > 0 ? (
+                {(q.kind === "chips" || q.kind === "multi") && q.options.length > 0 ? (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {q.options.map((o, i) => (
                       <Chip
                         key={i}
-                        active={answers[q.id] === o}
-                        onClick={() => setAnswers({ ...answers, [q.id]: answers[q.id] === o ? "" : o })}
+                        active={q.kind === "multi" ? splitMulti(answers[q.id]).includes(o) : answers[q.id] === o}
+                        onClick={() => setAnswers({ ...answers, [q.id]: q.kind === "multi" ? toggleMulti(answers[q.id], o) : answers[q.id] === o ? "" : o })}
                       >
                         {o}
                       </Chip>
@@ -294,14 +295,16 @@ export default function Flow() {
       {error && <p className="rounded-2xl bg-error/10 p-3 text-sm text-error">{error}</p>}
       <Card className="p-3">
         {photos.length === 0 ? (
-          <button
-            className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-line text-muted"
-            onClick={() => fileInput.current?.click()}
-          >
+          <div className="flex flex-col items-center gap-4 rounded-2xl border-2 border-dashed border-line px-4 py-8 text-center">
             <span className="text-5xl">📷</span>
-            <span className="font-semibold text-foreground">Take or choose photos</span>
-            <span className="text-sm">Up to 6. The first one is the cover.</span>
-          </button>
+            <span className="text-sm text-muted">Up to 6 photos. The first one is the cover.</span>
+            <div className="grid w-full grid-cols-2 gap-2">
+              <Button onClick={() => cameraInput.current?.click()}>Take a photo</Button>
+              <Button variant="secondary" onClick={() => fileInput.current?.click()}>
+                From gallery
+              </Button>
+            </div>
+          </div>
         ) : (
           <div className="grid grid-cols-3 gap-2">
             {photos.map((p, i) => (
@@ -318,16 +321,19 @@ export default function Flow() {
               </div>
             ))}
             {photos.length < 6 && (
-              <button
-                className="aspect-square rounded-xl border-2 border-dashed border-line text-3xl text-muted"
-                onClick={() => fileInput.current?.click()}
-              >
-                +
-              </button>
+              <div className="flex aspect-square flex-col gap-1">
+                <button className="flex-1 rounded-xl border-2 border-dashed border-line text-sm font-semibold" onClick={() => cameraInput.current?.click()}>
+                  📷 Camera
+                </button>
+                <button className="flex-1 rounded-xl border-2 border-dashed border-line text-sm font-semibold" onClick={() => fileInput.current?.click()}>
+                  🖼 Gallery
+                </button>
+              </div>
             )}
           </div>
         )}
         <input ref={fileInput} type="file" accept="image/*" multiple hidden onChange={(e) => addFiles(e.target.files)} />
+        <input ref={cameraInput} type="file" accept="image/*" capture="environment" hidden onChange={(e) => addFiles(e.target.files)} />
       </Card>
       <Card>
         <label className="font-medium">Tell us about it (optional)</label>
@@ -350,6 +356,15 @@ export default function Flow() {
       </Button>
     </div>
   );
+}
+
+// Multi-select answers are stored as one comma-separated string, so prompts and listings read them as text.
+function splitMulti(v: string | undefined): string[] {
+  return (v ?? "").split(",").map((x) => x.trim()).filter(Boolean);
+}
+function toggleMulti(v: string | undefined, option: string): string {
+  const set = splitMulti(v);
+  return (set.includes(option) ? set.filter((x) => x !== option) : [...set, option]).join(", ");
 }
 
 function SignIn({ onGuest }: { onGuest: () => void }) {

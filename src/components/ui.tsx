@@ -44,7 +44,7 @@ const TONES = {
 
 /** Content card (hairline on canvas) or one of the design's single-colour feature cards. */
 export function Card({ children, className = "", tone = "plain" }: { children: ReactNode; className?: string; tone?: keyof typeof TONES }) {
-  return <section className={`rounded-2xl p-4 ${TONES[tone]} ${className}`}>{children}</section>;
+  return <section className={`rounded-2xl p-5 ${TONES[tone]} ${className}`}>{children}</section>;
 }
 
 export function CopyButton({ text, label = "Copy", onCopied }: { text: string; label?: string; onCopied?: () => void }) {

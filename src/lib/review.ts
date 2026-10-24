@@ -27,8 +27,10 @@ export async function reviewListing(listing: Listing): Promise<Review> {
   const price = d.price as { comps?: { source: string; priceText: string }[] } | null;
   const task = [
     "Review this listing before it goes public on Sell It (home sellers in India).",
-    "Decide approve or flag. Flag banned, unsafe or illegal items, claims that contradict what the seller said,",
-    "and asking prices far outside the comparables. Give short reasons.",
+    "Decide approve or flag. Flag ONLY for: (1) banned, unsafe or illegal items; (2) claims that clearly contradict what",
+    "the seller said; (3) an asking price far above every comparable (a low price is the seller's choice, not a problem).",
+    "Do NOT flag for photo quality, missing comparables, or details you can't verify: approve those.",
+    "Give short reasons.",
     `Listing: ${listing.title}. Type: ${listing.listing_type}. Asking price: ${listing.price} rupees.`,
     `Seller's note: ${d.detect?.caption ?? ""} ${Object.values(d.answers ?? {}).join("; ")}`.trim(),
     `Photo observations: ${(d.detect?.conditionCues ?? []).join("; ")}`,

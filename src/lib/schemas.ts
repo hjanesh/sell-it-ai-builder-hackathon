@@ -11,8 +11,8 @@ export type Language = z.infer<typeof Language>;
 export const Question = z.object({
   id: z.string().describe("snake_case key, e.g. bought_when"),
   label: z.string().describe("Short question shown to the seller"),
-  kind: z.enum(["chips", "text", "number"]),
-  options: z.array(z.string()).describe("Chip options when kind=chips, else empty"),
+  kind: z.enum(["chips", "multi", "text", "number"]).describe("chips = pick one; multi = several can apply (what is included, issues, features)"),
+  options: z.array(z.string()).describe("Chip options when kind=chips or multi, else empty"),
   prefilled: z.string().nullable().describe("Answer already visible in the photo/caption, else null"),
 });
 export type Question = z.infer<typeof Question>;

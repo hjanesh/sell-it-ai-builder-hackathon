@@ -223,11 +223,11 @@ export default function Results(props: Props) {
           <h2 className="text-lg font-semibold">What to charge</h2>
           {cards ? (
             <>
-              <div className="mt-3 grid grid-cols-3 gap-2">
+              <div className="mt-4 flex flex-col gap-2">
                 {(
                   [
                     ["Sell fast", cards.fast, "Goes in a day or two"],
-                    ["Recommended", cards.recommended, "Fair, sells in a week"],
+                    ["Recommended", cards.recommended, "Fair, sells in about a week"],
                     ["Best price", cards.best, "If you can wait"],
                   ] as const
                 ).map(([label, value, hint]) => {
@@ -237,13 +237,15 @@ export default function Results(props: Props) {
                       key={label}
                       type="button"
                       onClick={() => setPriceValue(value)}
-                      className={`flex min-h-24 flex-col items-start justify-between rounded-xl border p-3 text-left transition ${
+                      className={`flex min-h-16 items-center justify-between gap-4 rounded-xl border px-4 py-3 text-left transition ${
                         active ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface"
                       }`}
                     >
-                      <span className={`text-xs font-semibold ${active ? "text-brand-ink" : "text-muted"}`}>{label}</span>
-                      <span className="text-xl font-medium tracking-tight">₹{formatINR(value)}</span>
-                      <span className={`text-[11px] leading-tight ${active ? "text-brand-ink/80" : "text-muted"}`}>{hint}</span>
+                      <span className="flex flex-col">
+                        <span className="text-sm font-semibold">{label}</span>
+                        <span className={`text-xs ${active ? "text-brand-ink/75" : "text-muted"}`}>{hint}</span>
+                      </span>
+                      <span className="shrink-0 text-xl font-medium tracking-tight tabular-nums">₹{formatINR(value)}</span>
                     </button>
                   );
                 })}
@@ -260,19 +262,20 @@ export default function Results(props: Props) {
               {price!.comps.length > 0 ? (
                 <div className="mt-3">
                   <p className="text-sm font-semibold">Similar listings we found today</p>
-                  <ul className="mt-1 flex flex-col gap-1">
+                  <ul className="mt-2 flex flex-col gap-2">
                     {price!.comps.map((c, i) => (
                       <li key={i}>
                         <a
                           href={c.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex justify-between gap-3 rounded-xl bg-cream px-3 py-2 text-sm"
+                          className="flex items-center justify-between gap-4 rounded-xl bg-cream px-4 py-3 text-sm"
                         >
-                          <span className="line-clamp-1">
-                            <span className="font-medium">{c.source}</span> · {c.title}
+                          <span className="flex min-w-0 flex-col">
+                            <span className="text-xs font-semibold text-muted">{c.source} ↗</span>
+                            <span className="line-clamp-2 text-body">{c.title}</span>
                           </span>
-                          <span className="shrink-0 font-semibold">{c.priceText}</span>
+                          <span className="shrink-0 font-semibold tabular-nums">{c.priceText}</span>
                         </a>
                       </li>
                     ))}
@@ -779,15 +782,17 @@ function FeedbackSheet({ slug, onClose }: { slug: string | null; onClose: () => 
 
 function PriceInput({ value, onChange }: { value: number | null; onChange: (v: number | null) => void }) {
   return (
-    <label className="mt-3 flex items-center gap-2">
-      <span className="whitespace-nowrap text-sm text-muted">Or type ₹</span>
-      <input
-        className="w-32 rounded-xl border border-line bg-surface px-3 py-2 text-lg font-medium"
-        inputMode="numeric"
-        value={value ?? ""}
-        onChange={(e) => onChange(Number(e.target.value.replace(/\D/g, "")) || null)}
-      />
-      <span className="text-xs text-muted">Every post updates</span>
+    <label className="mt-4 flex flex-col gap-1.5">
+      <span className="text-sm text-muted">Or type your own price. Every post updates.</span>
+      <span className="flex items-center rounded-xl border border-line bg-surface px-4">
+        <span className="text-lg text-muted">₹</span>
+        <input
+          className="w-full bg-transparent px-2 py-3 text-lg font-medium outline-none"
+          inputMode="numeric"
+          value={value ?? ""}
+          onChange={(e) => onChange(Number(e.target.value.replace(/\D/g, "")) || null)}
+        />
+      </span>
     </label>
   );
 }

@@ -131,17 +131,21 @@ export function compose(src: HTMLCanvasElement, format: FormatKey, box?: Box, ov
   ctx.fillStyle = backdropColor(src);
   ctx.fillRect(0, 0, w, h);
 
-  // Foreground: crop around the item with 8% padding, fit inside the frame.
+  // Foreground: crop around the item, but always with the photo's own aspect ratio (never reshaped), then
+  // scale it uniformly to fit the frame.
   const b = clampBox(box);
   const pad = 0.08;
-  let sx = (b.x - b.w * pad) * src.width;
-  let sy = (b.y - b.h * pad) * src.height;
+  const aspect = src.width / src.height;
   let sw = b.w * (1 + 2 * pad) * src.width;
   let sh = b.h * (1 + 2 * pad) * src.height;
-  sx = Math.max(0, sx);
-  sy = Math.max(0, sy);
-  sw = Math.min(src.width - sx, sw);
-  sh = Math.min(src.height - sy, sh);
+  if (sw / sh > aspect) sh = sw / aspect;
+  else sw = sh * aspect;
+  sw = Math.min(sw, src.width);
+  sh = Math.min(sh, src.height);
+  const cx = (b.x + b.w / 2) * src.width;
+  const cy = (b.y + b.h / 2) * src.height;
+  const sx = Math.max(0, Math.min(src.width - sw, cx - sw / 2));
+  const sy = Math.max(0, Math.min(src.height - sh, cy - sh / 2));
 
   const bottomBand = overlay ? h * 0.2 : 0;
   const availW = w * 0.88;
