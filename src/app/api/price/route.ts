@@ -9,13 +9,17 @@ export const maxDuration = 90;
 const priceSchema = z.toJSONSchema(PriceResult) as Record<string, unknown>;
 delete priceSchema.$schema;
 
+const SEARCH = {
+  name: "web_search",
+  max_uses: 3, // $10 per 1,000 searches: on Haiku this is most of the cost of a listing
+  user_location: { type: "approximate", country: "IN", city: "Bengaluru", region: "Karnataka", timezone: "Asia/Kolkata" },
+} as const;
+
 const TOOLS: Anthropic.Beta.BetaToolUnion[] = [
-  {
-    type: "web_search_20260209",
-    name: "web_search",
-    max_uses: 4,
-    user_location: { type: "approximate", country: "IN", city: "Bengaluru", region: "Karnataka", timezone: "Asia/Kolkata" },
-  },
+  // Haiku's searches fail with invalid_tool_input on the dynamic-filtering version, so it gets basic search.
+  MODEL.startsWith("claude-haiku")
+    ? { type: "web_search_20250305", ...SEARCH }
+    : { type: "web_search_20260209", ...SEARCH },
   {
     name: "submit_price",
     description: "Submit the final price suggestion and the comparable listings you found. Call exactly once, at the end.",

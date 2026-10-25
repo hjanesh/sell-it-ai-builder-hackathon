@@ -2,13 +2,13 @@ import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 
 export const client = new Anthropic();
-export const MODEL = process.env.CLAUDE_MODEL || "claude-sonnet-5-5";
+// Haiku: ~20x cheaper than Sonnet per token, and good enough for detect/packs/price.
+export const MODEL = process.env.CLAUDE_MODEL || "claude-haiku-5-5";
 
-// Server-side refusal fallback ("default" routing by refusal category).
-export const FALLBACK = {
-  betas: ["server-side-fallback-2026-07-01"],
-  fallbacks: "default" as const,
-};
+// Server-side refusal fallback ("default" routing by refusal category). Haiku has none, so we skip it there.
+export const FALLBACK = MODEL.startsWith("claude-haiku")
+  ? {}
+  : { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" as const };
 
 export const SYSTEM_BASE = `You are Sell It, the marketing team for home sellers in India: people selling old things,
 new/unused stock, and homemade or small-batch products (food, crafts) through OLX, Facebook Marketplace,
