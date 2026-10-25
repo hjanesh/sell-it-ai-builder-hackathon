@@ -112,7 +112,8 @@ The client secret stays server-side.
 
 ## 10. Stack
 ✅ **Decided:** Next.js (App Router) + TS + Tailwind + shadcn/ui on **Render** · **Supabase** (Postgres + Storage for images + Auth) ·
-Claude Sonnet 5.5 for vision, questions, price and copy (structured JSON) · canvas crop + light fix for photos (C3, no AI) · web search for comps ·
+Claude Haiku 5.5 for vision, questions, price and copy (structured JSON; switched from Sonnet 5.5 on 25 Oct to cut cost ~20x) ·
+canvas crop + light fix for photos (C3, no AI) · web search for comps (max 3 per price check) ·
 ElevenLabs STT (P1) · Pine Labs payment links.
 **Sign-up:** Supabase Auth with **Google sign-in** (one tap on Android), plus name + WhatsApp number on the profile.
 Don't rely on Supabase's built-in email sender for magic links: it's heavily rate-limited unless we add our own SMTP. No SMS OTP.
